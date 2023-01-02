@@ -6,11 +6,11 @@ A graphical user interface to monitor the rover
 ### Installing pyuic5
 
 - Identify where you have installed python (the folder where ypu have python.exe)
-- Open a cmd in that folder *(NOTE: if it is on the C main drive opne the terminal with administrator privileges)* and execute: 
+- Open a cmd in that folder *(NOTE: if it is on the C main drive open the terminal with administrator privileges)* and execute: 
 
         python -m pip install PyQt5
 
-After you have successfully installed QT Designer you should be able to execute inside a terminal the command
+After you have successfully installed PyQt5 you should be able to execute inside a terminal the command
 
     pyuic5
 
