@@ -5,6 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 #NOTA: example_widget.py DEVE ESSERE NELLA STESSA CARTELLA!!!
 #
 from example_widget import ExampleWidget
+from view2 import View2
 
 
 class Ui_MainWindow(object):
@@ -47,6 +48,14 @@ class Ui_MainWindow(object):
         subwindow.setWindowTitle("Example Widget")
         subwindow.show()
         self.mdiArea.cascadeSubWindows()
+
+        #view 2
+
+        view2 = View2()
+        subwindow1 = self.mdiArea.addSubWindow(view2)
+        subwindow1.setWindowTitle("View 2")
+        subwindow1.show()
+        
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
