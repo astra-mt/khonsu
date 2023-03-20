@@ -9,12 +9,9 @@ The required AT commands to set the configuration as SLAVE
     AT+UART=38400,0,0 (To fix the baud rate at 38400)
     
 */
-
-
-
 #include <SoftwareSerial.h>
 
-SoftwareSerial BTserial(6, 7); // RX | TX
+SoftwareSerial BTserial(2, 3); // RX | TX
 // Connect the HC-08 TX to Arduino pin 2 RX.
 // Connect the HC-08 RX to Arduino pin 3 TX through a voltage divider.
 
@@ -28,10 +25,12 @@ void setup(){
 }
 
 void loop() {  
-  if (BTserial.available()) {
-    Serial.write(BTserial.read());
+  //if data coming from BT module print them...
+  while (BTserial.available() > 0) {
+    Serial.println(BTserial.read());
   }
-  if (Serial.available()) {
+  //if data coming from Serial console send them to BT module...
+  while (Serial.available() > 0) {
     BTserial.write(Serial.read());
   }
 }
