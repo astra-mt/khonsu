@@ -14,9 +14,6 @@ sock.send("hello!!")
 sock.close()
 """
 
-
-
-
 serverMACAddress = '01:23:45:67:A6:31'
 
 port = 3
