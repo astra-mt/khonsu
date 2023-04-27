@@ -1,5 +1,5 @@
 import asyncio
-# import time as t
+import time as t
 from bleak import BleakScanner, BleakClient
 
 mac_address = "01:23:45:67:A6:31"
@@ -31,16 +31,16 @@ async def main():
 
         ##
 
-        for service in client.services:
-            print(service)
-            for char in service.characteristics:
-                print("\t\t", char)
+        # for service in client.services:
+        #     print(service)
+        #     for char in service.characteristics:
+        #         print("\t\t", char)
 
-        await client.write_gatt_char(VENDOR_SPECIFIC_UUID, b"forza napoli")
+        await client.write_gatt_char(VENDOR_SPECIFIC_UUID, b"napoli juve aperol")
 
-        res_bytes = await client.read_gatt_char(VENDOR_SPECIFIC_UUID)
-        res = bytearray.decode(res_bytes)
-        print(res)
+        #res_bytes = await client.read_gatt_char(VENDOR_SPECIFIC_UUID)
+        #res = bytearray.decode(res_bytes)
+        #print(res)
 
         t.sleep(5)
         await client.disconnect()
