@@ -11,8 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
-from movement import View2
-
+from logic import Logic as l
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -102,7 +101,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.setFont(font)
         self.pushButton_2.setStyleSheet("margin: 0rem;")
         self.pushButton_2.setObjectName("pushButton_2")
-        self.pushButton_2.clicked.connect(lambda: self.addSubWindow("movement"))
+        # self.pushButton_2.clicked.connect(lambda: self.addSubWindow("movement"))
         self.verticalLayout_3.addWidget(self.pushButton_2)
         self.pushButton_3 = QtWidgets.QPushButton(self.frame_4)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
@@ -187,23 +186,34 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setStretch(0, 4)
         self.horizontalLayout.setStretch(1, 7)
         self.horizontalLayout.setStretch(2, 4)
+
+        self.pushButton.clicked.connect(lambda: l.addSubWindow(self, "arm"))
+        # self.pushButton_3.clicked.connect(lambda: self.addSubWindow("arm"))
+        # self.pushButton_4.clicked.connect(lambda: self.addSubWindow("arm"))
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-    def addSubWindow(self, viewToAdd: str):
-        """ Show a subwindow in the MDI central area """
+    # def addSubWindow(self, viewToAdd: str):
+    #     """ Show a subwindow in the MDI central area """
 
-        view = None
+    #     view = None
 
-        if viewToAdd == "movement":
-            view = View2()
+    #     if viewToAdd == "movement":
+    #         view = View2()
+    #     elif viewToAdd == "arm":
+    #         view = View3()
 
-        if view != None:
-            subwindow = self.mdiArea.addSubWindow(view)
-            subwindow.setWindowTitle("Example Widget")
-            subwindow.show()
+    #     if view != None:
+    #         subwindow = self.mdiArea.addSubWindow(view)
+    #         subwindow.setWindowTitle("Example Widget")
+    #         subwindow.show()
+
+    # def tryNewFunctionality(self):
+    #     """ Testing """
+    #     print("Prova")
 
 
     def retranslateUi(self, MainWindow):

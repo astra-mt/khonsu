@@ -1,6 +1,6 @@
 import bluetooth
 
-target_name = "Arduino Astra"
+target_name = "astruino"
 target_address = None
 
 nearby_devices = bluetooth.discover_devices()

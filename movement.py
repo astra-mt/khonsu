@@ -5,7 +5,7 @@ class View2(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
-        Form.setObjectName("Form")
+        Form.setObjectName("Movement")
         Form.resize(710, 595)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
