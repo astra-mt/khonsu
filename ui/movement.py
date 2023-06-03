@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class View2(QtWidgets.QWidget):
+class MovementView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
