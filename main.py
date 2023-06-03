@@ -8,7 +8,7 @@ from bluetooth.astruino_ble import astruino
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(800, 600)
+        MainWindow.resize(1920, 1080)
         MainWindow.setAutoFillBackground(False)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -218,7 +218,7 @@ class Ui_MainWindow(object):
         print (f"DC engine set to: {value}") 
         return value*255
 
-
+    # genuinely have no fucking idea how this works
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "ASTRA Khonsu"))
@@ -240,9 +240,8 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-
-    # se scommenti esplode tutto
-    # obj_astruino = astruino()
-    # print(astruino.isAstruinoConnected)
-
     sys.exit(app.exec_())
+
+    # uncomment this if you like black screen and crashes
+    obj_astruino = astruino()
+    print(astruino.isAstruinoConnected)
