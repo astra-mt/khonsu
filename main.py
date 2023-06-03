@@ -230,8 +230,10 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Bluetooth"))
         self.pushButton_savelog.setText(_translate("MainWindow", "Save Log"))
 
-def run_after_ui_loads():
-    print("running after the ui loaded!!!!!")
+def load_astruino():
+    """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
+
+    print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
     obj_astruino = astruino()
     print(astruino.isAstruinoConnected)
 
@@ -248,6 +250,6 @@ if __name__ == "__main__":
     print("im heree")
 
     # uncomment this if you like black screens and crashes
-    QtCore.QTimer.singleShot(1000, run_after_ui_loads)
+    QtCore.QTimer.singleShot(1000, load_astruino)
 
     sys.exit(app.exec_())
