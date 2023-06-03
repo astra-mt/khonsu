@@ -4,6 +4,7 @@ from PyQt5.QtCore import QSize
 from ui.arm import ArmView
 from ui.movement import MovementView
 from bluetooth.astruino_ble import astruino
+import asyncio
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -191,7 +192,6 @@ class Ui_MainWindow(object):
 
     def addSubWindow(self, viewToAdd: str):
         """ Show a subwindow in the MDI central area """
-
         view = None
 
         if viewToAdd == "movement":
@@ -230,6 +230,11 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Bluetooth"))
         self.pushButton_savelog.setText(_translate("MainWindow", "Save Log"))
 
+def run_after_ui_loads():
+    print("running after the ui loaded!!!!!")
+    obj_astruino = astruino()
+    print(astruino.isAstruinoConnected)
+
 
 if __name__ == "__main__":
     import sys
@@ -240,8 +245,9 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
+    print("im heree")
 
-    # uncomment this if you like black screen and crashes
-    obj_astruino = astruino()
-    print(astruino.isAstruinoConnected)
+    # uncomment this if you like black screens and crashes
+    QtCore.QTimer.singleShot(1000, run_after_ui_loads)
+
+    sys.exit(app.exec_())

@@ -11,9 +11,9 @@ class astruino:
     isAstruinoConnected = False     # class attribute
 
     def __init__(self):
-        print(f"Initializing astruino. isAstruinoConnected: {isAstruinoConnected}")
+        print(f"Initializing astruino. isAstruinoConnected: {self.isAstruinoConnected}")
         asyncio.run(self.start_connection())
-        print(f"Initialization done. isAstruinoConnected: {isAstruinoConnected}")
+        print(f"Initialization done. isAstruinoConnected: {self.isAstruinoConnected}")
         return
 
     async def start_connection(self):
@@ -34,7 +34,7 @@ class astruino:
                     await client.connect()
                     print("astruino connesso!")
 
-                isAstruinoConnected = client.is_connected()
+                self.isAstruinoConnected = client.is_connected()
 
                 # for service in client.services:
                 #     print(service)
