@@ -6,6 +6,7 @@ from ui.movement import MovementView
 from bluetooth.astruino_ble import astruino
 import asyncio
 import signals
+import os
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -41,7 +42,7 @@ class Ui_MainWindow(object):
         self.label_3.setFont(font)
         self.label_3.setText("")
         self.label_3.setTextFormat(QtCore.Qt.AutoText)
-        self.label_3.setPixmap(QtGui.QPixmap(".\\ui\\../res/images/astra_logo-no_bg.png"))
+        self.label_3.setPixmap(QtGui.QPixmap(os.path.join(".", "res", "images", "logo.svg")))
         self.label_3.setScaledContents(True)
         self.label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_3.setWordWrap(False)
@@ -240,12 +241,12 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    MainWindow.setWindowIcon(QIcon(".\\res\\images\\astra_logo.jpg")) # fatto per windows 🤮
+    MainWindow.setWindowIcon(QIcon(os.path.join(".", "res", "images", "logo.svg")))
     MainWindow.setIconSize(QSize(256,256))
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    print("im heree")
+    print("UI Loaded Successfully!")
 
 
     # uncomment this if you like black screens and crashes

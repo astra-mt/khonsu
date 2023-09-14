@@ -1,6 +1,7 @@
 import asyncio
 import time as t
 from bleak import BleakScanner, BleakClient
+import signals
 
 # TODO porco dio è in chiaro
 mac_address = "01:23:45:67:A6:31"
@@ -10,8 +11,7 @@ IO_CONFIG_CHAR_UUID = "f000aa66-0451-4000-b000-000000000000"
 # by far the worst class i've ever written in my entire life
 
 class astruino:
-    isAstruinoConnected = False     # class attribute
-    
+    isAstruinoConnected = False     # class attribute    
 
     def __init__(self):
         print_debug_messages = True             # self explicatory

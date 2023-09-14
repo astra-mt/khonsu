@@ -1,3 +1,7 @@
+"""
+    Manages signals from the UI
+"""
+
 import sys
 
 def tryNewFunctionality(message: str=None):

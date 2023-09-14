@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+import signals
 
 class MovementView(QtWidgets.QWidget):
     def __init__(self):
