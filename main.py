@@ -180,25 +180,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setStretch(0, 4)
         self.horizontalLayout.setStretch(1, 7)
         self.horizontalLayout.setStretch(2, 4)
-
-        # self.pushButton_home.clicked.connect(lambda: self.tryNewFunctionality())
-        self.pushButton_home.clicked.connect(lambda: signals.tryNewFunctionality(message="compa porcodio"))
-        self.pushButton_savelog.clicked.connect(lambda: signals.handleSaveLog())
-        self.pushButton_settings.clicked.connect(lambda: signals.tryNewFunctionality("settings"))
-
-        self.pushButton_movement.clicked.connect(lambda: signals.tryNewFunctionality(message="movement"))
-        self.pushButton_movement.clicked.connect(lambda: self.addSubWindow("movement"))
-
-        self.pushButton_arm.clicked.connect(lambda: self.addSubWindow("arm"))
-        self.pushButton_arm.clicked.connect(lambda: signals.tryNewFunctionality(message="arm"))
-
         MainWindow.setCentralWidget(self.centralwidget)
-
         self.status_bar = QtWidgets.QStatusBar()
-
         MainWindow.setStatusBar(self.status_bar)
         self.status_bar.setObjectName('statusBar')
-        self.status_bar.showMessage('Messaggio iniziale della status bar')
+        self.status_bar.showMessage('Initializing app..')
+
+        self.pushButton_home.clicked.connect(lambda: signals.tryNewFunctionality(message="home"))
+        self.pushButton_savelog.clicked.connect(lambda: signals.handleSaveLog())
+        self.pushButton_settings.clicked.connect(lambda: signals.tryNewFunctionality("settings"))
+        self.pushButton_movement.clicked.connect(lambda: signals.tryNewFunctionality(message="movement"))
+        self.pushButton_movement.clicked.connect(lambda: self.addSubWindow("movement"))
+        self.pushButton_arm.clicked.connect(lambda: self.addSubWindow("arm"))
+        self.pushButton_arm.clicked.connect(lambda: signals.tryNewFunctionality(message="arm"))
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -229,16 +223,15 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Bluetooth"))
         self.pushButton_savelog.setText(_translate("MainWindow", "Save Log"))
 
-def load_astruino():
-    """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
-
-    print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
-    obj_astruino = astruino()
-    print(astruino.isAstruinoConnected)
-
-
+# def load_astruino():
+#     """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
+#     print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
+#     obj_astruino = astruino()
+#     print("fine caricamento")
+    
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     MainWindow.setWindowIcon(QIcon(os.path.join(".", "res", "images", "logo.svg")))
@@ -248,9 +241,10 @@ if __name__ == "__main__":
     MainWindow.show()
     print("UI Loaded Successfully!")
 
-
     # uncomment this if you like black screens and crashes
-    # crasha se non è connesso
-    # QtCore.QTimer.singleShot(1000, load_astruino)
+    # crasha se non è connesso  
+    ui.status_bar.showMessage(f"Trying to connect to Astruino")
+    # obj_astruino = QtCore.QTimer.singleShot(500, load_astruino)
+    # ui.status_bar.showMessage(f"Astruino {astruino.isAstruinoConnected}")
 
     sys.exit(app.exec_())

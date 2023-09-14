@@ -17,5 +17,9 @@ def handleSaveLog():
 
 def set_dc_engine_value(value): 
     """ Returns a value for the DC engine. Highest value: , Lowest value: 255 """
-    print (f"DC engine set to: {value}") 
+    print(f"DC engine set to: {value}") 
     return value*255
+
+def set_rpm_value(value: str='0'):
+    print(f"rpm set to: {value}");
+    return int(value)

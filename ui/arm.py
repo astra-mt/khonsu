@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+import signals
 
 class ArmView(QtWidgets.QWidget):
     def __init__(self):
@@ -79,6 +80,8 @@ class ArmView(QtWidgets.QWidget):
         self.graphicsView.setGeometry(QtCore.QRect(5, 1, 581, 741))
         self.graphicsView.setObjectName("graphicsView")
         self.horizontalLayout.addWidget(self.frame)
+
+
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
