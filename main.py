@@ -5,6 +5,7 @@ from ui.arm import ArmView
 from ui.movement import MovementView
 from bluetooth.astruino_ble import astruino
 import asyncio
+import signals
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -179,13 +180,24 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setStretch(1, 7)
         self.horizontalLayout.setStretch(2, 4)
 
-        self.pushButton_home.clicked.connect(lambda: self.tryNewFunctionality())
-        self.pushButton_savelog.clicked.connect(lambda: self.handleSaveLog())
-        self.pushButton_settings.clicked.connect(lambda: self.tryNewFunctionality())
+        # self.pushButton_home.clicked.connect(lambda: self.tryNewFunctionality())
+        self.pushButton_home.clicked.connect(lambda: signals.tryNewFunctionality(message="compa porcodio"))
+        self.pushButton_savelog.clicked.connect(lambda: signals.handleSaveLog())
+        self.pushButton_settings.clicked.connect(lambda: signals.tryNewFunctionality("settings"))
+
+        self.pushButton_movement.clicked.connect(lambda: signals.tryNewFunctionality(message="movement"))
         self.pushButton_movement.clicked.connect(lambda: self.addSubWindow("movement"))
+
         self.pushButton_arm.clicked.connect(lambda: self.addSubWindow("arm"))
+        self.pushButton_arm.clicked.connect(lambda: signals.tryNewFunctionality(message="arm"))
 
         MainWindow.setCentralWidget(self.centralwidget)
+
+        self.status_bar = QtWidgets.QStatusBar()
+
+        MainWindow.setStatusBar(self.status_bar)
+        self.status_bar.setObjectName('statusBar')
+        self.status_bar.showMessage('Messaggio iniziale della status bar')
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -203,20 +215,6 @@ class Ui_MainWindow(object):
             subwindow = self.mdiArea.addSubWindow(view)
             subwindow.setWindowTitle("Example Widget")
             subwindow.show()
-
-    def tryNewFunctionality(self):
-        """ Testing """
-        print("Prova")
-    
-    def handleSaveLog(self):
-        """ Handles Save Log"""
-        print("Handling Save Log")
-    
-
-    def set_dc_engine_value(value): 
-        """ Returns a value for the DC engine. Highest value: , Lowest value: 255 """
-        print (f"DC engine set to: {value}") 
-        return value*255
 
     # genuinely have no fucking idea how this works
     def retranslateUi(self, MainWindow):
@@ -242,14 +240,16 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    MainWindow.setWindowIcon(QIcon(".\\res\\images\\astra_logo.jpg"))
+    MainWindow.setWindowIcon(QIcon(".\\res\\images\\astra_logo.jpg")) # fatto per windows 🤮
     MainWindow.setIconSize(QSize(256,256))
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     print("im heree")
 
+
     # uncomment this if you like black screens and crashes
-    QtCore.QTimer.singleShot(1000, load_astruino)
+    # crasha se non è connesso
+    # QtCore.QTimer.singleShot(1000, load_astruino)
 
     sys.exit(app.exec_())
