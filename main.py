@@ -245,12 +245,14 @@ if __name__ == "__main__":
     # uncomment this if you like black screens and crashes
     # crasha se non è connesso  
     
-    astruino = Astruino()
-    # astruino.send_command('napoli juve', 3)
+    # astruino = Astruino()
 
-    ui.status_bar.showMessage(f"Trying to connect to Astruino...")
+    # ui.status_bar.showMessage(f"Trying to connect to Astruino...")
 
-    asyncio.run(astruino.start_connection())
+    # # TODO ogni handle deve richiamare funzioni del genere
+    # asyncio.run(astruino.send_command("gyro getAngles"))
+
+    # del astruino
 
     # astruino.send_command()
 

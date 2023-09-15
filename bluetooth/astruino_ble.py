@@ -23,60 +23,14 @@ class Astruino:
         # if self.print_debug_messages:
         #     print(
         #         f"Initialization done. Connection: {self.isAstruinoConnected}")
-        print('initializing {self}')
+        print(f"initializing {self}")
         return
 
-    def __des__(self):
-        print('destroying {self}')
-        asyncio.run(disconnect())
-        print('obj destroyed')
+    def __del__(self):
+        print(f"destroying {self}")
+        asyncio.run(self.disconnect())
+        print("obj destroyed")
         return
-
-    async def start_connection(self):
-        # astruino = await BleakScanner.find_device_by_name('astruino', timetout=self.connection_timeout)
-
-        # if self.print_debug_messages:
-        #     if astruino:
-        #         print("Astruino connected: ", astruino)
-        #     else:
-        #         print(
-        #             f"Connection timeout ({self.connection_timeout}s) - Astruino non connesso")
-        #         return
-        
-        async with BleakClient(mac_address) as client:
-            await client.write_gatt_char(VENDOR_SPECIFIC_UUID, b"napoli juve aperol")
-
-        # Collegato e funzionante :)
-        # async with BleakClient(mac_address) as client:
-        #     if self.print_debug_messages:
-        #         if client.is_connected():
-        #             print("Astruino già connesso!")
-        #         else:
-        #             print("Astruino non connesso! connessione in corso")
-        #             await client.connect()
-        #             print("astruino connesso!")
-
-        #     self.isAstruinoConnected = client.is_connected()
-
-            # for service in client.services:
-            #     print(service)
-            #     for char in service.characteristics:
-            #         print("\t\t", char)
-
-            # await client.write_gatt_char(VENDOR_SPECIFIC_UUID, b"napoli juve aperol")
-
-            # res_bytes = await client.read_gatt_char(VENDOR_SPECIFIC_UUID)
-            # res = bytearray.decode(res_bytes)
-            # print(res)
-
-            # t.sleep(5)
-            # await client.disconnect()
-
-            # if self.print_debug_messages:
-            #     print("Astruino sconnesso!")
-
-    # async def close_connection():
-    #     return
 
     async def disconnect(self):
         async with BleakClient(mac_address) as client:
@@ -84,97 +38,23 @@ class Astruino:
             if self.print_debug_messages:
                 print("Astruino sconnesso!")
 
-    # async def main():
-        # devices = await BleakScanner.discover()
-        # for d in devices:
-        #     print(d)
-
-        # astruino = await BleakScanner.find_device_by_name('astruino', timetout=5.0)
-
-        # if self.print_debug_messages:
-        #     if astruino:
-        #         print(astruino)
-        #     else:
-        #         print("non funziona yolo")
-        #         return
-
-        # isAstruinoConnected = client.is_connected
-        # # Collegato e funzionante :)
-
-        # async with BleakClient(mac_address) as client:
-        #     if self.print_debug_messages:
-        #         if client.is_connected:
-        #             print("Astruino già connesso!")
-        #         else:
-        #             print("Astruino non connesso! connessione in corso")
-        #             await client.connect()
-        #             print("astruino connesso!")
-
-            # for service in client.services:
-            #     print(service)
-            #     for char in service.characteristics:
-            #         print("\t\t", char)
-
-            # await client.write_gatt_char(VENDOR_SPECIFIC_UUID, b"napoli juve aperol")
-
-            # res_bytes = await client.read_gatt_char(VENDOR_SPECIFIC_UUID)
-            # res = bytearray.decode(res_bytes)
-            # print(res)
-
-        #     t.sleep(5)
-        #     await client.disconnect()
-        # if self.print_debug_messages:
-        #     print("Astruino sconnesso!")
-
     async def send_command(self, command: str, val: float = None):
         """ Sto scrivendo codice senza arduino e circuito elettronico, non ho idea se ciò funzionerà"""
 
-        if print_debug_messages:
-            print("about to send {command}, {val}")
+        if self.print_debug_messages:
+            print(f"about to send {command}, {val}")
 
-        res_bytes = parse_command(command, val)
+        res_bytes = self.parse_command(command, val)
 
         async with BleakClient(mac_address) as client:
-            await client.write_gatt_char(VENDOR_SPECIFIC_UUID, res_bytes)
+            await client.write_gatt_char(VENDOR_SPECIFIC_UUID, bytes(res_bytes, 'utf-8'))
 
             if self.print_debug_messages:
-                print('just sent: ', res_bytes)
+                print(f"just sent: {res_bytes}")
 
         return
 
-    async def testAstruino():
-        async with BleakClient(mac_address) as client:
-            if self.print_debug_messages:
-                if not client.is_connected:
-                    print("This should not fucking happen")
-                    return
-
-            if self.print_debug_messages:
-                for service in client.services:
-                    print(service)
-                    for char in service.characteristics:
-                        print("\t\t", char)
-
-            await send_command('napoli juve', 3)
-
-            # example_command = parse_command('napoli juve', 3)
-            # await client.write_gatt_char(VENDOR_SPECIFIC_UUID, example_command)
-
-            if self.print_debug_messages:
-                print('finished writing')
-
-            res_bytes = await client.read_gatt_char(VENDOR_SPECIFIC_UUID)
-            res = bytearray.decode(res_bytes)
-
-            if self.print_debug_messages:
-                print('message received: ', res)
-
-            # t.sleep(5)
-            if self.print_debug_messages:
-                print('sleep done')
-        return
-
-    def parse_command(command: str, val: float = None):
+    def parse_command(self, command: str, val: float = None) -> str:
         """
             Returns the bytes sequence of a command
             command: str
@@ -187,9 +67,10 @@ class Astruino:
         res = command.replace(' ', '-')
 
         if val:
-            return res + str(val)
+            return res + '-' + str(val)
 
         if self.print_debug_messages:
             print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
 
-        return bytes(res, "utf-8")
+        # Ho provato a ritornare bytes(res, 'utf-8') ma boh non funziona
+        return res
