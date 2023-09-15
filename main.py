@@ -223,11 +223,11 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Bluetooth"))
         self.pushButton_savelog.setText(_translate("MainWindow", "Save Log"))
 
-def load_astruino():
-    """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
-    # print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
-    obj_astruino = astruino()
-    print("fine caricamento")
+# def load_astruino():
+#     """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
+#     # print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
+#     obj_astruino = astruino()
+#     print("fine caricamento")
     
 if __name__ == "__main__":
     import sys
@@ -240,19 +240,20 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     print("UI Loaded Successfully!")
+    ui.status_bar.showMessage(f"Trying to connect to Astruino")
 
     # uncomment this if you like black screens and crashes
     # crasha se non è connesso  
-    ui.status_bar.showMessage(f"Trying to connect to Astruino")
     
     astruino = Astruino()
+    # astruino.send_command('napoli juve', 3)
 
-    ui.status_bar.showMessage(f"Trying to connect to Astruino")
+    ui.status_bar.showMessage(f"Trying to connect to Astruino...")
 
-    await astruino.send_command("napoli juve", 3)
+    asyncio.run(astruino.start_connection())
 
+    # astruino.send_command()
 
-    # ui.status_bar.showMessage(f"Astruino {astruino.isAstruinoConnected}")
+    # ui.status_bar.showMessage(f"Astruino connection")
 
-    await astruino.disconnect()
     sys.exit(app.exec_())
