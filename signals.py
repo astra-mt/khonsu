@@ -21,5 +21,9 @@ def set_dc_engine_value(value):
     return value*255
 
 def set_rpm_value(value: str='0'):
-    print(f"rpm set to: {value}");
+    print(f"rpm set to: {value}")
     return int(value)
+
+# def handle_go():
+
+#     return

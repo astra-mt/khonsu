@@ -3,7 +3,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
 from ui.arm import ArmView
 from ui.movement import MovementView
-from bluetooth.astruino_ble import astruino
+from bluetooth.astruino_ble import Astruino
 import asyncio
 import signals
 import os
@@ -223,11 +223,11 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Bluetooth"))
         self.pushButton_savelog.setText(_translate("MainWindow", "Save Log"))
 
-# def load_astruino():
-#     """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
-#     print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
-#     obj_astruino = astruino()
-#     print("fine caricamento")
+def load_astruino():
+    """ loads the astruno class containing all fancy objects. runs only once. todo: reload it on demand """
+    # print("!🔥!🔥!🔥!🔥! running after the ui loaded !🔥!🔥!🔥!🔥!")
+    obj_astruino = astruino()
+    print("fine caricamento")
     
 if __name__ == "__main__":
     import sys
@@ -244,7 +244,15 @@ if __name__ == "__main__":
     # uncomment this if you like black screens and crashes
     # crasha se non è connesso  
     ui.status_bar.showMessage(f"Trying to connect to Astruino")
-    # obj_astruino = QtCore.QTimer.singleShot(500, load_astruino)
+    
+    astruino = Astruino()
+
+    ui.status_bar.showMessage(f"Trying to connect to Astruino")
+
+    await astruino.send_command("napoli juve", 3)
+
+
     # ui.status_bar.showMessage(f"Astruino {astruino.isAstruinoConnected}")
 
+    await astruino.disconnect()
     sys.exit(app.exec_())
