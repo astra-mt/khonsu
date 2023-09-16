@@ -1,11 +1,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize
-from ui.arm import ArmView
-from ui.movement import MovementView
-from bluetooth.astruino_ble import Astruino
-import asyncio
-import signals
+from .ui.arm import ArmView
+from .ui.movement import MovementView
+from .bluetooth.astruino_ble import Astruino
+# import asyncio
+from . import signals
 import os
 
 class Ui_MainWindow(object):
@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
         self.label_3.setFont(font)
         self.label_3.setText("")
         self.label_3.setTextFormat(QtCore.Qt.AutoText)
-        self.label_3.setPixmap(QtGui.QPixmap(os.path.join(".", "res", "images", "logo.svg")))
+        self.label_3.setPixmap(QtGui.QPixmap(os.path.join("khonsu", "res", "images", "logo.svg")))
         self.label_3.setScaledContents(True)
         self.label_3.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
         self.label_3.setWordWrap(False)
@@ -234,13 +234,12 @@ if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
-    MainWindow.setWindowIcon(QIcon(os.path.join(".", "res", "images", "logo.svg")))
+    MainWindow.setWindowIcon(QIcon(os.path.join("khonsu", "res", "images", "logo.svg")))
     MainWindow.setIconSize(QSize(256,256))
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     print("UI Loaded Successfully!")
-    ui.status_bar.showMessage(f"Trying to connect to Astruino")
 
     # uncomment this if you like black screens and crashes
     # crasha se non è connesso  

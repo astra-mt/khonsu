@@ -1,10 +1,15 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-import signals
+from .. import signals
+from ..bluetooth.astruino_ble import Astruino
+import asyncio
+from asyncqt import QEventLoop
+
 
 class MovementView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
+        self.astruino = Astruino()
         Form.setObjectName("Movement")
         Form.resize(710, 595)
         self.gridLayout = QtWidgets.QGridLayout(Form)
@@ -40,21 +45,53 @@ class MovementView(QtWidgets.QWidget):
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.pushButton_go = QtWidgets.QPushButton(self.frame)
         self.pushButton_go.setObjectName("pushButton_go")
+        self.pushButton_go.setDisabled(True)
         self.verticalLayout.addWidget(self.pushButton_go)
         self.pushButton_stop = QtWidgets.QPushButton(self.frame)
         self.pushButton_stop.setObjectName("pushButton_stop")
+        self.pushButton_stop.setDisabled(True)
         self.verticalLayout.addWidget(self.pushButton_stop)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
 
-        self.spinBox_rpm.valueChanged.connect(lambda: self.dial.setValue(signals.set_rpm_value(self.spinBox_rpm.value())))
-        self.dial.valueChanged.connect(lambda: self.spinBox_rpm.setValue(self.dial.value()))
-        self.pushButton_go.clicked.connect(lambda: signals.tryNewFunctionality("go"))
-        self.pushButton_stop.clicked.connect(lambda: signals.tryNewFunctionality("stop"))
+
+        self.dial.valueChanged.connect(
+            lambda: self.handle_valueChanged_dial()
+        )
+
+        self.spinBox_rpm.valueChanged.connect(
+            lambda: self.dial.setValue(self.spinBox_rpm.value())
+        )
+
+        self.pushButton_go.clicked.connect(
+            lambda: self.handle_go("command go", self.spinBox_rpm.value()))
+
+        self.pushButton_stop.clicked.connect(
+            lambda: self.handle_stop("command go"))
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def handle_valueChanged_dial(self):
+        val = self.dial.value()
+        self.spinBox_rpm.setValue(signals.set_rpm_value(val))
+
+        if not val:
+            # self.dial.setDisabled(True)
+            self.pushButton_go.setDisabled(True)
+            self.pushButton_stop.setDisabled(True)
+        else:
+            # self.dial.setDisabled(False)
+            self.pushButton_go.setDisabled(False)
+            self.pushButton_stop.setDisabled(False)
+
+    def handle_go(self, command: str, val: int = 0):
+        asyncio.run(self.astruino.send_command('command go', val))
+
+    def handle_stop(self, command: str):
+        self.dial.setValue(0)
+        asyncio.run(self.astruino.send_command('command go', 0))
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

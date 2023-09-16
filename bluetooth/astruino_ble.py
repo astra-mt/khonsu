@@ -1,7 +1,7 @@
 import asyncio
 import time as t
 from bleak import BleakScanner, BleakClient
-import signals
+from .. import signals
 
 # TODO porco dio è in chiaro
 mac_address = "01:23:45:67:A6:31"
@@ -16,41 +16,26 @@ class Astruino:
     print_debug_messages = True             # self explicatory
     connection_timeout = 2.0
 
-    def __init__(self):
-        # if self.print_debug_messages:
-        #     print(f"Initializing astruino")
+    # def __init__(self):
+    #     pass
+
+    async def send_command(self, command: str, val: int = None):
+        """
+            Sends a command to Astruino
+            command: "napoli juve"
+            <val>: 3
+        """
 
         # if self.print_debug_messages:
-        #     print(
-        #         f"Initialization done. Connection: {self.isAstruinoConnected}")
-        print(f"initializing {self}")
-        return
-
-    def __del__(self):
-        print(f"destroying {self}")
-        asyncio.run(self.disconnect())
-        print("obj destroyed")
-        return
-
-    async def disconnect(self):
-        async with BleakClient(mac_address) as client:
-            await client.disconnect()
-            if self.print_debug_messages:
-                print("Astruino sconnesso!")
-
-    async def send_command(self, command: str, val: float = None):
-        """ Sto scrivendo codice senza arduino e circuito elettronico, non ho idea se ciò funzionerà"""
-
-        if self.print_debug_messages:
-            print(f"about to send {command}, {val}")
+        #     print(f"about to send {command}, {val}")
 
         res_bytes = self.parse_command(command, val)
 
         async with BleakClient(mac_address) as client:
             await client.write_gatt_char(VENDOR_SPECIFIC_UUID, bytes(res_bytes, 'utf-8'))
 
-            if self.print_debug_messages:
-                print(f"just sent: {res_bytes}")
+            # if self.print_debug_messages:
+            #     print(f"just sent: {res_bytes}")
 
         return
 
@@ -69,8 +54,8 @@ class Astruino:
         if val:
             return res + '-' + str(val)
 
-        if self.print_debug_messages:
-            print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
+        # if self.print_debug_messages:
+        #     print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
 
         # Ho provato a ritornare bytes(res, 'utf-8') ma boh non funziona
         return res
