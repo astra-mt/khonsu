@@ -1,3 +1,5 @@
+from .ui.movement import MovementView
+from .ui.arm import ArmView
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
@@ -14,24 +16,22 @@ from bleak import BleakScanner, BleakClient
 mac_address = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
-from .ui.arm import ArmView
-from .ui.movement import MovementView
-
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
     start_signal = Signal()
     done_signal = Signal()
 
-
     print_debug_messages = True
     args = ""  # arguments in astruino_send_command
 
     def __init__(self):
         super().__init__()
-        self.args = "mannaggia ad enf"
 
         self.setObjectName("MainWindow")
+        self.setWindowIcon(
+            QIcon(os.path.join("khonsu", "res", "images", "logo.svg")))
+        self.setIconSize(QSize(256, 256))
         self.resize(1024, 720)
         self.setAutoFillBackground(False)
         self.centralwidget = QtWidgets.QWidget(self)
@@ -246,6 +246,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             view = MovementView()
         elif viewToAdd == "arm":
             view = ArmView()
+        elif viewToAdd == "settings":
+            view = None
+            print('SETTINGS VIEW NOT YET ADDED')
 
         if view:
             subwindow = self.mdiArea.addSubWindow(view)
@@ -253,7 +256,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             subwindow.show()
 
     def handle_home(self):
-        self.pushButton_home.disabled(True)
+        self.pushButton_home.setDisabled(True)
         if self.print_debug_messages:
             print('handle home')
 
@@ -370,15 +373,8 @@ class AsyncHelper(QObject):
 if __name__ == "__main__":
 
     app = QtWidgets.QApplication(sys.argv)
-    # MainWindow = QtWidgets.QMainWindow()
-    # MainWindow.setWindowIcon(
-    #     QIcon(os.path.join("khonsu", "res", "images", "logo.svg")))
-    # MainWindow.setIconSize(QSize(256, 256))
-
     ui = Ui_MainWindow()
-
     async_helper = AsyncHelper(ui, ui.astruino_send_command)
-
     ui.show()
 
     signal.signal(signal.SIGINT, signal.SIG_DFL)
