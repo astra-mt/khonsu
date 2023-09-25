@@ -1,6 +1,9 @@
+Currently migrating from PyQt5 to PySide6
+
 # ASTRA Khonsu
 
-A graphical user interface to monitor the rover
+A graphical user interface to monitor our rover "Scout"
+
 ## Translating the UI in code
 
 ### Installing pyuic5

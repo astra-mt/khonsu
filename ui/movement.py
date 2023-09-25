@@ -1,15 +1,13 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from .. import signals
-from ..bluetooth.astruino_ble import Astruino
+from ..bluetooth.astruino import Astruino
 import asyncio
-from asyncqt import QEventLoop
-
 
 class MovementView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        Form = self
         self.astruino = Astruino()
+        Form = self
         Form.setObjectName("Movement")
         Form.resize(710, 595)
         self.gridLayout = QtWidgets.QGridLayout(Form)
