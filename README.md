@@ -1,8 +1,15 @@
-Currently migrating from PyQt5 to PySide6
 
 # ASTRA Khonsu
 
-A graphical user interface to monitor our rover "Scout"
+A graphical user interface to monitor our rover "Scout". Currently migrating from PyQt5 to PySide6.
+
+**Work in progress**
+
+- [ ] Assicurarsi che la connessione sia stata stabilita. Attualmente lancia eccezione.
+- [ ] 
+
+
+# Old, ignore
 
 ## Translating the UI in code
 
@@ -60,3 +67,19 @@ To specify weights for space of elements inside a container you have to search t
 <img src="./images/stretch_example.png"></img>
 
 where I specified `2,6,2` to get the 20% 60% 20% proportions of the 3 elements
+
+## Check arduino output
+
+On linux run
+
+`ls /dev/ttyACM0 && sudo chmod a+rw /dev/ttyACM0`
+
+---
+
+Open the file `bluetooth.ino` within the Arduino IDE, then load it on the board and run it. Open the serial plotter to see the received data.
+
+A list of commands can be acquired by sending the command `AT+HELP`. Some of those don't work. That command and others can be found in the [Notion AT-09 Documentation](https://www.notion.so/astra-team/Documentation-of-bluetooth-module-AT-09-4bb4d29fb7db46d291fcfd81fea8ce22) that contains all the tested commands we've been able to send.
+
+Make sure to select the board *Arduino Mega or Mega 2560*, in the dropdown menu in the top left border.   
+
+GUI [Commands to implement](https://www.notion.so/astra-team/Documentazione-comandi-e445912294c94576b910cc75a6e5b087)
