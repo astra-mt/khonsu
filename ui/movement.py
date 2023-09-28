@@ -1,6 +1,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 from .. import signals
 
+
 class MovementView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
@@ -57,7 +58,6 @@ class MovementView(QtWidgets.QWidget):
         self.spinBox_rpm.valueChanged.connect(
             lambda: self.dial.setValue(self.spinBox_rpm.value())
         )
-
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -69,7 +69,7 @@ class MovementView(QtWidgets.QWidget):
             self.pushButton_go.setDisabled(True)
         else:
             self.pushButton_go.setDisabled(False)
-            
+
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))

@@ -10,7 +10,7 @@ import signal
 import asyncio
 import datetime
 
-from bleak import BleakScanner, BleakClient
+from bleak import BleakScanner, BleakClient, BleakError
 from .async_helper import AsyncHelper
 
 from .ui.movement import MovementView
@@ -23,6 +23,7 @@ ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
 
 SAVELOG_PATH = os.getcwd()
+
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
@@ -47,8 +48,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(Form)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout.setObjectName("horizontalLayout")
+        # https://pythonprogramminglanguage.com/pyqt5-video-widget/
+        # https://doc.qt.io/qtforpython-6/PySide6/QtMultimediaWidgets/QVideoWidget.html
+        # Il fatto di usare QLabel è temporaneo
         self.videoWidget = QtWidgets.QLabel(Form)
         self.videoWidget.setText('Video Output not yet implemented')
+        self.videoWidget.setAlignment(QtCore.Qt.AlignCenter)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -56,7 +61,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         sizePolicy.setHeightForWidth(
             self.videoWidget.sizePolicy().hasHeightForWidth())
         self.videoWidget.setSizePolicy(sizePolicy)
-        self.videoWidget.setMinimumSize(QtCore.QSize(720, 576))
+        self.videoWidget.setMinimumSize(QtCore.QSize(512, 512))
         self.videoWidget.setObjectName("videoWidget")
         self.horizontalLayout.addWidget(self.videoWidget)
         self.scrollArea = QtWidgets.QScrollArea(Form)
@@ -136,7 +141,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         )
 
         self.pushButton_checkConnession.clicked.connect(
-            lambda: self.handle_pushButton_checkConnession()
+            lambda: asyncio.run(self.handle_pushButton_checkConnession())
         )
 
         self.pushButton_saveLog.clicked.connect(
@@ -150,15 +155,30 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.args = "movement " + str(val)
         self.async_start()
 
-    def handle_pushButton_checkConnession(self):
-        print('TODO Handle Connession')
+    async def handle_pushButton_checkConnession(self):
+        self.status_bar.showMessage('Checking Astruino Connection')
+
+        self.set_all_buttons_enabled(False)
+
+        try:
+            async with BleakClient(MAC_ADDRESS) as client:
+                await client.write_gatt_char(ASTRUINO_UUID, bytes(res_bytes, 'utf-8'))
+        except BleakError as e:
+            # TODO Write error to LOG as well
+            print(e)
+            self.status_bar.showMessage(str(e))
+            self.set_all_buttons_enabled(False)
+
+        self.pushButton_checkConnession.setEnabled(True)
 
     def handle_pushButton_saveLog(self):
+        self.status_bar.showMessage('Saving file log')
+
         t = time.localtime()
         current_time = time.strftime("%D_%H%M%S", t)
-        current_time = current_time.replace('/','')
+        current_time = current_time.replace('/', '')
         # print(current_time)
-        
+
         path = os.path.join(SAVELOG_PATH, "logs")
 
         if not os.path.exists(path):
@@ -166,7 +186,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 os.makedirs(path)
             except OSError as e:
                 print(e)
-        
+
         if os.path.exists(path):
             path = os.path.join(path, f"log_{current_time}")
             log_file = open(path, "x")
@@ -177,7 +197,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.status_bar.showMessage(f'Log written, open {path}')
 
             print('TODO File scritto con successo ma è inutile')
-
 
     def set_all_buttons_enabled(self, var: bool):
         """
@@ -197,15 +216,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.movementWidget.pushButton_go,
             self.movementWidget.pushButton_stop,
             self.pushButton_checkConnession,
+            self.armWidget.pushButton_armGrab,
+            self.armWidget.pushButton_armMove,
         ]
 
         for obj in objects:
             obj.setEnabled(var)
 
-        if not var:
-            self.status_bar.showMessage('Sending command...')
-        else:
-            self.status_bar.showMessage('Astruino ready to send')
+        # if not var:
+        #     self.status_bar.showMessage('Sending command to Astruino')
+        # else:
+        #     self.status_bar.showMessage('Astruino ready to send')
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -281,6 +302,8 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     ui = Ui_MainWindow()
     async_helper = AsyncHelper(ui, ui.astruino_send_command)
+    ui.set_all_buttons_enabled(False)
+    ui.pushButton_checkConnession.setEnabled(True)
     ui.show()
 
     # No clue what this does, don't touch.

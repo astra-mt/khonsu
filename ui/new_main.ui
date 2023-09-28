@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1044</width>
-    <height>594</height>
+    <width>1031</width>
+    <height>304</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,8 +24,8 @@
      </property>
      <property name="minimumSize">
       <size>
-       <width>720</width>
-       <height>576</height>
+       <width>20</width>
+       <height>20</height>
       </size>
      </property>
     </widget>
@@ -45,9 +45,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>298</width>
-        <height>574</height>
+        <y>-89</y>
+        <width>487</width>
+        <height>373</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -104,15 +104,15 @@
        <item>
         <widget class="QToolBox" name="toolBox">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <property name="geometry">
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>280</width>
-            <height>136</height>
+            <width>469</width>
+            <height>68</height>
            </rect>
           </property>
           <attribute name="label">
@@ -124,8 +124,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>280</width>
-            <height>136</height>
+            <width>469</width>
+            <height>68</height>
            </rect>
           </property>
           <attribute name="label">
