@@ -7,7 +7,7 @@ class MovementView(QtWidgets.QWidget):
         Form = self
         Form.setObjectName("MovementView")
         Form.setAccessibleName("MovementView")
-        Form.resize(512, 512)
+        # Form.resize(512, 512)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
         self.frame = QtWidgets.QFrame(Form)
@@ -45,7 +45,6 @@ class MovementView(QtWidgets.QWidget):
         self.verticalLayout.addWidget(self.pushButton_go)
         self.pushButton_stop = QtWidgets.QPushButton(self.frame)
         self.pushButton_stop.setObjectName("pushButton_stop")
-        self.pushButton_stop.setDisabled(True)
         self.verticalLayout.addWidget(self.pushButton_stop)
         self.horizontalLayout_2.addLayout(self.verticalLayout)
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
@@ -59,12 +58,6 @@ class MovementView(QtWidgets.QWidget):
             lambda: self.dial.setValue(self.spinBox_rpm.value())
         )
 
-        # self.pushButton_go.clicked.connect(
-        #     lambda: self.handle_go("command go", self.spinBox_rpm.value()))
-
-        # self.pushButton_stop.clicked.connect(
-        #     lambda: self.handle_stop("command go"))
-
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -73,25 +66,10 @@ class MovementView(QtWidgets.QWidget):
         self.spinBox_rpm.setValue(signals.set_rpm_value(val))
 
         if not val:
-            # self.dial.setDisabled(True)
             self.pushButton_go.setDisabled(True)
-            self.pushButton_stop.setDisabled(True)
         else:
-            # self.dial.setDisabled(False)
             self.pushButton_go.setDisabled(False)
-            self.pushButton_stop.setDisabled(False)
-
-    # def handle_go(self, command: str, val: int = 0):
-    #     asyncio.run(self.astruino.send_command('command go', val))
-
-    # def handle_stop(self, command: str):
-    #     self.dial.setValue(0)
-    #     asyncio.run(self.astruino.send_command('command go', 0))
-
-    def callable_buttons(self):
-        res = [self.pushButton_go, self.pushButton_stop]
-        return res
-
+            
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))

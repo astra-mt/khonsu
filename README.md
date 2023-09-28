@@ -6,8 +6,8 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 **Work in progress**
 
 - [ ] Assicurarsi che la connessione sia stata stabilita. Attualmente lancia eccezione.
-- [ ] Gestire comportamento quando chiudi la GUI durante un'operazione 
-
+- [ ] Gestire comportamento quando chiudi la GUI durante un'operazione send-astruino
+- [ ] Ricevere output e stamparlo su terminale in app
 
 # Old, ignore
 
@@ -26,9 +26,9 @@ After you have successfully installed PyQt5 you should be able to execute inside
 
 The command:
 
-    pyuic5 /path/to/your/.ui_file -o generated_code.py
+    pyuic5 --output=./new_main.py ./new_main.ui
 
-will generate the `generated_code.py` file inside the folder where you execute the command
+will generate the `new_main.py` file inside the folder where you execute the command
 
 ### Organization of the project
  - The `res` folder contains the resources used by the interface(images,etc..)

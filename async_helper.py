@@ -2,6 +2,8 @@ from PySide6.QtCore import QObject, Signal, Slot, QEvent
 from PySide6.QtWidgets import QApplication
 import asyncio
 
+# Vietato l'accesso a chiunque non abbia Enf nel nome
+
 class AsyncHelper(QObject):
 
     class ReenterQtObject(QObject):
