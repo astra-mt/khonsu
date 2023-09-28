@@ -99,22 +99,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.toolBox = QtWidgets.QToolBox(self.scrollAreaWidgetContents)
         self.toolBox.setObjectName("toolBox")
         self.movementWidget = MovementView()
-        self.movementWidget.setGeometry(QtCore.QRect(0, 0, 280, 136))
         self.movementWidget.setObjectName("MovementView")
         self.toolBox.addItem(self.movementWidget, "")
-        self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 98, 28))
-        self.page_2.setObjectName("page_2")
-        self.toolBox.addItem(self.page_2, "")
+        self.armWidget = ArmView()
+        self.armWidget.setObjectName("armWidget")
+        self.toolBox.addItem(self.armWidget, "")
+        self.page_3 = QtWidgets.QWidget()
+        self.page_3.setObjectName("page_3")
+        self.toolBox.addItem(self.page_3, "")
         self.verticalLayout.addWidget(self.toolBox)
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout.addWidget(self.scrollArea)
 
         # TODO Status Bar
-        # self.status_bar = QtWidgets.QStatusBar()
-        # self.setStatusBar(self.status_bar)
-        # self.status_bar.setObjectName('statusBar')
-        # self.status_bar.showMessage('Initializing app..')
+        self.status_bar = QtWidgets.QStatusBar()
+        self.setStatusBar(self.status_bar)
+        self.status_bar.setObjectName('statusBar')
+        self.status_bar.showMessage('Welcome back!')
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -134,18 +135,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_checkConnession.clicked.connect(
             lambda: self.handle_pushButton_checkConnession()
         )
-    
+
     def handle_pushButton_movement(self, val):
         if self.print_debug_messages:
             print('handle movement')
 
         self.args = "movement " + str(val)
         self.async_start()
-    
-    
+
     def handle_pushButton_checkConnession(self):
         print('TODO Handle Connession')
-    
 
     def set_all_buttons_enabled(self, var: bool):
         """
@@ -160,7 +159,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # this MESS is caused since we are using subwindows and widgets and shit like that
         # in the next iteration PLEASE put everything into main.py.........
 
-
         # list of objects that call astruino_send_command
         objects = [
             self.movementWidget.pushButton_go,
@@ -170,6 +168,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         for obj in objects:
             obj.setEnabled(var)
+        
+        if not var:
+            self.status_bar.showMessage('Sending command...')
+        else:
+            self.status_bar.showMessage('Astruino ready to send')
+            
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -182,7 +186,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.toolBox.setItemText(self.toolBox.indexOf(
             self.movementWidget), _translate("MainWindow", "Movement"))
         self.toolBox.setItemText(self.toolBox.indexOf(
-            self.page_2), _translate("MainWindow", "Page 2"))
+            self.armWidget), _translate("MainWindow", "Page 2"))
+        self.toolBox.setItemText(self.toolBox.indexOf(
+            self.page_3), _translate("MainWindow", "Page 3"))
 
         pass
 
@@ -209,7 +215,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             if self.print_debug_messages:
                 print(f"just sent: {res_bytes}")
                 print('signal done')
-            
+
             self.astruino_done.emit()
 
     def parse_command(self, command: str) -> str:

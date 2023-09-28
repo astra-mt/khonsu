@@ -7,7 +7,7 @@ class ArmView(QtWidgets.QWidget):
         Form = self
         Form.setObjectName("ArmView")
         Form.setAccessibleName("ArmView")
-        Form.resize(400, 300)
+        # Form.resize(400, 300)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.frame = QtWidgets.QFrame(Form)
@@ -15,7 +15,7 @@ class ArmView(QtWidgets.QWidget):
         self.frame.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame.setObjectName("frame")
         self.frame_2 = QtWidgets.QFrame(self.frame)
-        self.frame_2.setGeometry(QtCore.QRect(581, -10, 581, 763))
+        # self.frame_2.setGeometry(QtCore.QRect(581, -10, 581, 763))
         font = QtGui.QFont()
         font.setFamily("Arial Narrow")
         font.setPointSize(20)

@@ -8,6 +8,7 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 - [ ] Assicurarsi che la connessione sia stata stabilita. Attualmente lancia eccezione.
 - [ ] Gestire comportamento quando chiudi la GUI durante un'operazione send-astruino
 - [ ] Ricevere output e stamparlo su terminale in app
+- [ ] Rifare ArmView
 
 # Old, ignore
 
