@@ -5,7 +5,8 @@ class ArmView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
-        Form.setObjectName("Form")
+        Form.setObjectName("ArmView")
+        Form.setAccessibleName("ArmView")
         Form.resize(400, 300)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -88,6 +89,9 @@ class ArmView(QtWidgets.QWidget):
         Form.setTabOrder(self.plainTextEdit, self.plainTextEdit_3)
         Form.setTabOrder(self.plainTextEdit_3, self.plainTextEdit_4)
         Form.setTabOrder(self.plainTextEdit_4, self.plainTextEdit_2)
+
+    def callable_buttons(self):
+        pass
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

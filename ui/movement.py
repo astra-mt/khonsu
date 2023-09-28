@@ -1,15 +1,13 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 from .. import signals
-from ..bluetooth.astruino import Astruino
-import asyncio
 
 class MovementView(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.astruino = Astruino()
         Form = self
-        Form.setObjectName("Movement")
-        Form.resize(710, 595)
+        Form.setObjectName("MovementView")
+        Form.setAccessibleName("MovementView")
+        Form.resize(512, 512)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")
         self.frame = QtWidgets.QFrame(Form)
@@ -53,7 +51,6 @@ class MovementView(QtWidgets.QWidget):
         self.gridLayout_2.addLayout(self.horizontalLayout_2, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
 
-
         self.dial.valueChanged.connect(
             lambda: self.handle_valueChanged_dial()
         )
@@ -62,11 +59,11 @@ class MovementView(QtWidgets.QWidget):
             lambda: self.dial.setValue(self.spinBox_rpm.value())
         )
 
-        self.pushButton_go.clicked.connect(
-            lambda: self.handle_go("command go", self.spinBox_rpm.value()))
+        # self.pushButton_go.clicked.connect(
+        #     lambda: self.handle_go("command go", self.spinBox_rpm.value()))
 
-        self.pushButton_stop.clicked.connect(
-            lambda: self.handle_stop("command go"))
+        # self.pushButton_stop.clicked.connect(
+        #     lambda: self.handle_stop("command go"))
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -84,12 +81,16 @@ class MovementView(QtWidgets.QWidget):
             self.pushButton_go.setDisabled(False)
             self.pushButton_stop.setDisabled(False)
 
-    def handle_go(self, command: str, val: int = 0):
-        asyncio.run(self.astruino.send_command('command go', val))
+    # def handle_go(self, command: str, val: int = 0):
+    #     asyncio.run(self.astruino.send_command('command go', val))
 
-    def handle_stop(self, command: str):
-        self.dial.setValue(0)
-        asyncio.run(self.astruino.send_command('command go', 0))
+    # def handle_stop(self, command: str):
+    #     self.dial.setValue(0)
+    #     asyncio.run(self.astruino.send_command('command go', 0))
+
+    def callable_buttons(self):
+        res = [self.pushButton_go, self.pushButton_stop]
+        return res
 
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate

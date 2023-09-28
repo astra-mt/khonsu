@@ -6,7 +6,7 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 **Work in progress**
 
 - [ ] Assicurarsi che la connessione sia stata stabilita. Attualmente lancia eccezione.
-- [ ] 
+- [ ] Gestire comportamento quando chiudi la GUI durante un'operazione 
 
 
 # Old, ignore
@@ -76,7 +76,7 @@ On linux run
 
 ---
 
-Open the file `bluetooth.ino` within the Arduino IDE, then load it on the board and run it. Open the serial plotter to see the received data.
+Open the file `bluetooth.ino` within the Arduino IDE, then load it on the board and run it. Open the serial plotter to see the received data, and choose the option `Both NL & CR`.
 
 A list of commands can be acquired by sending the command `AT+HELP`. Some of those don't work. That command and others can be found in the [Notion AT-09 Documentation](https://www.notion.so/astra-team/Documentation-of-bluetooth-module-AT-09-4bb4d29fb7db46d291fcfd81fea8ce22) that contains all the tested commands we've been able to send.
 

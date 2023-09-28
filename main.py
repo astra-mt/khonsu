@@ -1,5 +1,3 @@
-from .ui.movement import MovementView
-from .ui.arm import ArmView
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
@@ -12,21 +10,29 @@ import signal
 import asyncio
 
 from bleak import BleakScanner, BleakClient
+from .async_helper import AsyncHelper
 
-mac_address = "01:23:45:67:A6:31"
+from .ui.movement import MovementView
+from .ui.arm import ArmView
+
+# Informazioni private in chiaro, ma siamo fortunati, soltanto chi
+# ha accesso alla repository può causare errori fatali!
+MAC_ADDRESS = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
-    start_signal = Signal()
-    done_signal = Signal()
+    astruino_start = Signal()
+    astruino_done = Signal()
 
-    print_debug_messages = True
+    print_debug_messages = False
     args = ""  # arguments in astruino_send_command
 
     def __init__(self):
         super().__init__()
+
+        are_all_buttons_enabled = True
 
         self.setObjectName("MainWindow")
         self.setWindowIcon(
@@ -223,12 +229,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.status_bar.setObjectName('statusBar')
         # self.status_bar.showMessage('Initializing app..')
 
+        # signal: true -> enables buttons, false -> disables buttons
+
         self.pushButton_movement.clicked.connect(
             lambda: self.addSubWindow("movement"))
         self.pushButton_arm.clicked.connect(
             lambda: self.addSubWindow("arm"))
-        self.pushButton_arm.clicked.connect(
-            lambda: signals.tryNewFunctionality(message="arm"))
 
         # Astruino fa qualcosa santodio
         self.pushButton_home.clicked.connect(
@@ -241,27 +247,57 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def addSubWindow(self, viewToAdd: str):
         """ Show a subwindow in the MDI central area """
         view = None
+        windowTitle = None
 
         if viewToAdd == "movement":
             view = MovementView()
+            windowTitle = "Movement"
         elif viewToAdd == "arm":
             view = ArmView()
+            windowTitle = "Arm"
         elif viewToAdd == "settings":
             view = None
             print('SETTINGS VIEW NOT YET ADDED')
 
         if view:
             subwindow = self.mdiArea.addSubWindow(view)
-            subwindow.setWindowTitle("Example Widget")
+            subwindow.setWindowTitle(windowTitle)
             subwindow.show()
 
     def handle_home(self):
-        self.pushButton_home.setDisabled(True)
         if self.print_debug_messages:
             print('handle home')
 
         self.args = "napoli juve 3"
         self.async_start()
+
+    def set_all_buttons_enabled(self, var: bool):
+        """
+            Sets all buttons that could trigger arduino_send_command to value var.
+            var: True -> enables all buttons
+            var: False -> disables all buttons
+        """
+
+        # TODO
+        # look im desperate dont judge. quick and dirty solution.
+        # i just wanna focus on more serious stuff asap 
+        # this MESS is caused since we are using subwindows and widgets and shit like that
+        # in the next iteration PLEASE put everything into main.py.........
+
+        objects = [
+            self.pushButton_home
+        ]
+
+
+        print(self.mdiArea.subWindowList())
+
+        for w in self.mdiArea.subWindowList():
+            if w is MovementView():
+                objects.append(w.callable_buttons())
+                print('obj is movement view')
+
+        for obj in objects:
+            obj.setEnabled(var)
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -276,24 +312,28 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     @Slot()
     def async_start(self):
-        print('signal start')
-        self.start_signal.emit()
+        self.astruino_start.emit()
+        if self.print_debug_messages:
+            print('signal start')
+        self.set_all_buttons_enabled(False)
 
     async def astruino_send_command(self):
         """
         Sends a command to Astruino
-        command: "napoli juve 3"
+        example command: "napoli juve 3"
+        calls parse_command() and sends b"napoli-juve-3" to Astruino
         """
 
         res_bytes = self.parse_command(self.args)
 
-        async with BleakClient(mac_address) as client:
+        async with BleakClient(MAC_ADDRESS) as client:
             await client.write_gatt_char(ASTRUINO_UUID, bytes(res_bytes, 'utf-8'))
 
-            # if self.print_debug_messages:
-            #     print(f"just sent: {res_bytes}")
+            if self.print_debug_messages:
+                print(f"just sent: {res_bytes}")
 
-        self.done_signal.emit()
+        self.astruino_done.emit()
+        print('signal done')
 
     def parse_command(self, command: str) -> str:
         """
@@ -306,69 +346,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         res = command.replace(' ', '-')
 
-        # if self.print_debug_messages:
-        #     print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
+        if self.print_debug_messages:
+            print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
 
         # Ho provato a ritornare bytes(res, 'utf-8') ma non funziona
         return res
-
-
-class AsyncHelper(QObject):
-
-    class ReenterQtObject(QObject):
-
-        def event(self, event):
-            if event.type() == QEvent.Type.User + 1:
-                event.fn()
-                return True
-            return False
-
-    class ReenterQtEvent(QEvent):
-
-        def __init__(self, fn):
-            super().__init__(QEvent.Type(QEvent.Type.User + 1))
-            self.fn = fn
-
-    def __init__(self, worker, entry):
-        super().__init__()
-        self.reenter_qt = self.ReenterQtObject()
-        self.entry = entry
-        self.loop = asyncio.new_event_loop()
-        self.done = False
-
-        self.worker = worker
-        if hasattr(self.worker, "start_signal") and isinstance(self.worker.start_signal, Signal):
-            self.worker.start_signal.connect(self.on_worker_started)
-        if hasattr(self.worker, "done_signal") and isinstance(self.worker.done_signal, Signal):
-            self.worker.done_signal.connect(self.on_worker_done)
-
-    @Slot()
-    def on_worker_started(self):
-        if not self.entry:
-            raise Exception(
-                "No entry point for the asyncio event loop was set.")
-        asyncio.set_event_loop(self.loop)
-        self.loop.create_task(self.entry())
-        self.loop.call_soon(self.next_guest_run_schedule)
-        # Set this explicitly as we might want to restart the guest run.
-        self.done = False
-        self.loop.run_forever()
-
-    @Slot()
-    def on_worker_done(self):
-        self.done = True
-        print('done_signal emitted')
-
-    def continue_loop(self):
-        if not self.done:
-            self.loop.call_soon(self.next_guest_run_schedule)
-            self.loop.run_forever()
-
-    def next_guest_run_schedule(self):
-        self.loop.stop()
-        QApplication.postEvent(
-            self.reenter_qt, self.ReenterQtEvent(self.continue_loop))
-
 
 if __name__ == "__main__":
 
@@ -377,5 +359,6 @@ if __name__ == "__main__":
     async_helper = AsyncHelper(ui, ui.astruino_send_command)
     ui.show()
 
+    # no clue what this does, don't touch
     signal.signal(signal.SIGINT, signal.SIG_DFL)
     sys.exit(app.exec())
