@@ -8,6 +8,7 @@ import sys
 import time
 import signal
 import asyncio
+import datetime
 
 from bleak import BleakScanner, BleakClient
 from .async_helper import AsyncHelper
@@ -20,6 +21,8 @@ from .ui.arm import ArmView
 MAC_ADDRESS = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
+
+SAVELOG_PATH = os.getcwd()
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
@@ -40,7 +43,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         Form = QtWidgets.QWidget(self)
         Form.setObjectName("MainWindow")
-        Form.resize(1044, 594)
+        # Form.resize(1044, 594)
         self.setCentralWidget(Form)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -136,6 +139,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             lambda: self.handle_pushButton_checkConnession()
         )
 
+        self.pushButton_saveLog.clicked.connect(
+            lambda: self.handle_pushButton_saveLog()
+        )
+
     def handle_pushButton_movement(self, val):
         if self.print_debug_messages:
             print('handle movement')
@@ -145,6 +152,32 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def handle_pushButton_checkConnession(self):
         print('TODO Handle Connession')
+
+    def handle_pushButton_saveLog(self):
+        t = time.localtime()
+        current_time = time.strftime("%D_%H%M%S", t)
+        current_time = current_time.replace('/','')
+        # print(current_time)
+        
+        path = os.path.join(SAVELOG_PATH, "logs")
+
+        if not os.path.exists(path):
+            try:
+                os.makedirs(path)
+            except OSError as e:
+                print(e)
+        
+        if os.path.exists(path):
+            path = os.path.join(path, f"log_{current_time}")
+            log_file = open(path, "x")
+            log_file.write(
+                'prova123'
+            )
+
+            self.status_bar.showMessage(f'Log written, open {path}')
+
+            print('TODO File scritto con successo ma è inutile')
+
 
     def set_all_buttons_enabled(self, var: bool):
         """
@@ -168,12 +201,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         for obj in objects:
             obj.setEnabled(var)
-        
+
         if not var:
             self.status_bar.showMessage('Sending command...')
         else:
             self.status_bar.showMessage('Astruino ready to send')
-            
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -186,11 +218,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.toolBox.setItemText(self.toolBox.indexOf(
             self.movementWidget), _translate("MainWindow", "Movement"))
         self.toolBox.setItemText(self.toolBox.indexOf(
-            self.armWidget), _translate("MainWindow", "Page 2"))
+            self.armWidget), _translate("MainWindow", "Arm"))
         self.toolBox.setItemText(self.toolBox.indexOf(
             self.page_3), _translate("MainWindow", "Page 3"))
-
-        pass
 
     @Slot()
     def async_start(self):
