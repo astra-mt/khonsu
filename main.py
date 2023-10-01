@@ -1,14 +1,16 @@
 from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QPixmap
 from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QSize, QObject, Signal, Slot, QEvent
+from PySide6.QtCore import QSize, QObject, Signal, Slot, QEvent, QTimer
 
 import os
+import cv2
 import sys
 import time
 import signal
 import asyncio
 import datetime
+import qimage2ndarray
 
 from bleak import BleakScanner, BleakClient, BleakError
 from .async_helper import AsyncHelper
@@ -16,8 +18,11 @@ from .async_helper import AsyncHelper
 from .ui.movement import MovementView
 from .ui.arm import ArmView
 
+
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
+
+CAM_URL = "http://192.168.1.18"
 MAC_ADDRESS = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
@@ -26,6 +31,8 @@ SAVELOG_PATH = os.getcwd()
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
+
+    video_size = QSize(320, 240)
 
     astruino_start = Signal()
     astruino_done = Signal()
@@ -52,16 +59,16 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # https://doc.qt.io/qtforpython-6/PySide6/QtMultimediaWidgets/QVideoWidget.html
         # Il fatto di usare QLabel è temporaneo
         self.videoWidget = QtWidgets.QLabel(Form)
-        self.videoWidget.setText('Video Output not yet implemented')
-        self.videoWidget.setAlignment(QtCore.Qt.AlignCenter)
+        # self.videoWidget.setText('Video Output not yet implemented')
+        # self.videoWidget.setAlignment(QtCore.Qt.AlignCenter)
         sizePolicy = QtWidgets.QSizePolicy(
             QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(
             self.videoWidget.sizePolicy().hasHeightForWidth())
-        self.videoWidget.setSizePolicy(sizePolicy)
-        self.videoWidget.setMinimumSize(QtCore.QSize(512, 512))
+        # self.videoWidget.setSizePolicy(sizePolicy)
+        # self.videoWidget.setMinimumSize(QtCore.QSize(512, 512))
         self.videoWidget.setObjectName("videoWidget")
         self.horizontalLayout.addWidget(self.videoWidget)
         self.scrollArea = QtWidgets.QScrollArea(Form)
@@ -140,9 +147,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             lambda: self.handle_pushButton_movement(0)
         )
 
-        self.pushButton_checkConnession.clicked.connect(
-            lambda: asyncio.run(self.handle_pushButton_checkConnession())
-        )
+        # self.pushButton_checkConnession.clicked.connect(
+        #     # lambda: asyncio.run(self.handle_pushButton_checkConnession())
+        # )
 
         self.pushButton_saveLog.clicked.connect(
             lambda: self.handle_pushButton_saveLog()
@@ -228,6 +235,29 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # else:
         #     self.status_bar.showMessage('Astruino ready to send')
 
+    def setup_camera(self):
+        """
+            Initialize camera.
+        """
+        
+        self.capture = cv2.VideoCapture(CAM_URL + ":81/stream")
+        self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_size.width())
+        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_size.height())
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.display_video_stream)
+        # TODO no clue what this does 
+        self.timer.start(20)
+
+    def display_video_stream(self):
+        """Read frame from camera and repaint QLabel widget.
+        """
+        _, frame = self.capture.read()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame = cv2.flip(frame, 1)
+        image = qimage2ndarray.array2qimage(frame)  # SOLUTION FOR MEMORY LEAK
+        self.videoWidget.setPixmap(QPixmap.fromImage(image))
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -305,6 +335,7 @@ if __name__ == "__main__":
     ui.set_all_buttons_enabled(False)
     ui.pushButton_checkConnession.setEnabled(True)
     ui.show()
+    ui.setup_camera()
 
     # No clue what this does, don't touch.
     signal.signal(signal.SIGINT, signal.SIG_DFL)
