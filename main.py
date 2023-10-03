@@ -21,11 +21,11 @@ from .ui.arm import ArmView
 
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
+# TOOD Soluzione: https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
 
 CAM_URL = "http://192.168.1.18"
 MAC_ADDRESS = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
-
 
 SAVELOG_PATH = os.getcwd()
 
@@ -39,6 +39,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     print_debug_messages = True
     args = ""  # arguments in astruino_send_command
+
+    old_image = None
 
     def __init__(self):
         super().__init__()
@@ -55,8 +57,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(Form)
         self.horizontalLayout = QtWidgets.QHBoxLayout(Form)
         self.horizontalLayout.setObjectName("horizontalLayout")
-        # https://pythonprogramminglanguage.com/pyqt5-video-widget/
-        # https://doc.qt.io/qtforpython-6/PySide6/QtMultimediaWidgets/QVideoWidget.html
         # Il fatto di usare QLabel è temporaneo
         self.videoWidget = QtWidgets.QLabel(Form)
         # self.videoWidget.setText('Video Output not yet implemented')
@@ -126,7 +126,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
         self.horizontalLayout.addWidget(self.scrollArea)
 
-        # TODO Status Bar
         self.status_bar = QtWidgets.QStatusBar()
         self.setStatusBar(self.status_bar)
         self.status_bar.setObjectName('statusBar')
@@ -212,11 +211,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             var: False -> disables all buttons
         """
 
-        # TODO
+        # TODO (REDO)
         # look im desperate dont judge. quick and dirty solution.
         # i just wanna focus on more serious stuff asap
-        # this MESS is caused since we are using subwindows and widgets and shit like that
-        # in the next iteration PLEASE put everything into main.py.........
 
         # list of objects that call astruino_send_command
         objects = [
@@ -239,24 +236,35 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         """
             Initialize camera.
         """
-        
+
         self.capture = cv2.VideoCapture(CAM_URL + ":81/stream")
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_size.width())
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_size.height())
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.display_video_stream)
-        # TODO no clue what this does 
-        self.timer.start(20)
+        self.timer.start(5)
+
+        # TODO Implement two buttons for the camera
+        # You can start and stop the video stream by using self.timer.start(number) and self.timer.stop()
 
     def display_video_stream(self):
-        """Read frame from camera and repaint QLabel widget.
         """
+            Read frame from camera and repaint QLabel widget.
+            Awfully dirty solution
+        """
+
+        # TODO there must be a better way to do this ...
+
         _, frame = self.capture.read()
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.flip(frame, 1)
         image = qimage2ndarray.array2qimage(frame)  # SOLUTION FOR MEMORY LEAK
-        self.videoWidget.setPixmap(QPixmap.fromImage(image))
+        
+        if image is not old_image:
+            self.videoWidget.setPixmap(QPixmap.fromImage(image))
+
+        old_image = image
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
