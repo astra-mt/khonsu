@@ -261,10 +261,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         frame = cv2.flip(frame, 1)
         image = qimage2ndarray.array2qimage(frame)  # SOLUTION FOR MEMORY LEAK
         
-        if image is not old_image:
+        if image is not self.old_image:
             self.videoWidget.setPixmap(QPixmap.fromImage(image))
 
-        old_image = image
+        self.old_image = image
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
