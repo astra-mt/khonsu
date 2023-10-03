@@ -11,6 +11,7 @@ import signal
 import asyncio
 import datetime
 import qimage2ndarray
+from datetime import datetime
 
 from bleak import BleakScanner, BleakClient, BleakError
 from .async_helper import AsyncHelper
@@ -18,10 +19,9 @@ from .async_helper import AsyncHelper
 from .ui.movement import MovementView
 from .ui.arm import ArmView
 
-
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
-# TOOD Soluzione: https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
+# TODO Soluzione: https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
 
 CAM_URL = "http://192.168.1.18"
 MAC_ADDRESS = "01:23:45:67:A6:31"
@@ -98,10 +98,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_icon.setObjectName("label_icon")
         self.gridLayout.addWidget(self.label_icon, 0, 0, 1, 1)
         self.verticalLayout.addWidget(self.frame)
-        self.textBrowser = QtWidgets.QTextBrowser(
+        self.label_log = QtWidgets.QLabel(
             self.scrollAreaWidgetContents)
-        self.textBrowser.setObjectName("textBrowser")
-        self.verticalLayout.addWidget(self.textBrowser)
+        self.label_log.setObjectName("label_log")
+        self.verticalLayout.addWidget(self.label_log)
         self.pushButton_saveLog = QtWidgets.QPushButton(
             self.scrollAreaWidgetContents)
         self.pushButton_saveLog.setObjectName("pushButton_saveLog")
@@ -146,36 +146,43 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             lambda: self.handle_pushButton_movement(0)
         )
 
-        # self.pushButton_checkConnession.clicked.connect(
-        #     # lambda: asyncio.run(self.handle_pushButton_checkConnession())
-        # )
+        self.pushButton_checkConnession.clicked.connect(
+            lambda: self.handle_pushButton_checkConnession()
+        )
 
         self.pushButton_saveLog.clicked.connect(
             lambda: self.handle_pushButton_saveLog()
         )
 
+    # Handles
+
     def handle_pushButton_movement(self, val):
         if self.print_debug_messages:
             print('handle movement')
 
+        if (val == 0):
+            self.movementWidget.dial.setValue(0)
+
         self.args = "movement " + str(val)
         self.async_start()
 
-    async def handle_pushButton_checkConnession(self):
+    def handle_pushButton_checkConnession(self):
         self.status_bar.showMessage('Checking Astruino Connection')
 
+        # tmp = self.movementWidget.pushButton_go.isChecked() # TODO
         self.set_all_buttons_enabled(False)
+        # self.movementWidget.pushButton_go.setChecked(tmp)   # vergognati
 
-        try:
-            async with BleakClient(MAC_ADDRESS) as client:
-                await client.write_gatt_char(ASTRUINO_UUID, bytes(res_bytes, 'utf-8'))
-        except BleakError as e:
-            # TODO Write error to LOG as well
-            print(e)
-            self.status_bar.showMessage(str(e))
-            self.set_all_buttons_enabled(False)
+        self.args = "AT"
+        self.async_start()
 
-        self.pushButton_checkConnession.setEnabled(True)
+        # TODO check IF it actually worked
+
+        # print(e)
+        # self.status_bar.showMessage(str(e))
+        # self.set_all_buttons_enabled(False)
+
+        # self.pushButton_checkConnession.setEnabled(True)
 
     def handle_pushButton_saveLog(self):
         self.status_bar.showMessage('Saving file log')
@@ -196,13 +203,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         if os.path.exists(path):
             path = os.path.join(path, f"log_{current_time}")
             log_file = open(path, "x")
+            # TODO Scrivi se solo se il file non è vuoto
             log_file.write(
-                'prova123'
+                self.label_log.text()
             )
 
             self.status_bar.showMessage(f'Log written, open {path}')
 
-            print('TODO File scritto con successo ma è inutile')
+    # Log
+
+    def append_log(self, str_to_append: str):
+        current_text = self.label_log.text()
+        self.label_log.setText(
+            f'{datetime.now()} ' + str_to_append + '\n' + current_text)
+
+    # Misc
 
     def set_all_buttons_enabled(self, var: bool):
         """
@@ -232,6 +247,23 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # else:
         #     self.status_bar.showMessage('Astruino ready to send')
 
+    def retranslateUi(self):
+        _translate = QtCore.QCoreApplication.translate
+        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label_battery.setText(_translate("MainWindow", "Battery"))
+        self.pushButton_checkConnession.setText(
+            _translate("MainWindow", "Check Connession"))
+        self.label_icon.setText(_translate("MainWindow", "Icon"))
+        self.pushButton_saveLog.setText(_translate("MainWindow", "Save Log"))
+        self.toolBox.setItemText(self.toolBox.indexOf(
+            self.movementWidget), _translate("MainWindow", "Movement"))
+        self.toolBox.setItemText(self.toolBox.indexOf(
+            self.armWidget), _translate("MainWindow", "Arm"))
+        self.toolBox.setItemText(self.toolBox.indexOf(
+            self.page_3), _translate("MainWindow", "Page 3"))
+
+    # Camera
+
     def setup_camera(self):
         """
             Initialize camera.
@@ -260,26 +292,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = cv2.flip(frame, 1)
         image = qimage2ndarray.array2qimage(frame)  # SOLUTION FOR MEMORY LEAK
-        
+
         if image is not self.old_image:
             self.videoWidget.setPixmap(QPixmap.fromImage(image))
 
         self.old_image = image
-
-    def retranslateUi(self):
-        _translate = QtCore.QCoreApplication.translate
-        self.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label_battery.setText(_translate("MainWindow", "Battery"))
-        self.pushButton_checkConnession.setText(
-            _translate("MainWindow", "Check Connession"))
-        self.label_icon.setText(_translate("MainWindow", "Icon"))
-        self.pushButton_saveLog.setText(_translate("MainWindow", "Save Log"))
-        self.toolBox.setItemText(self.toolBox.indexOf(
-            self.movementWidget), _translate("MainWindow", "Movement"))
-        self.toolBox.setItemText(self.toolBox.indexOf(
-            self.armWidget), _translate("MainWindow", "Arm"))
-        self.toolBox.setItemText(self.toolBox.indexOf(
-            self.page_3), _translate("MainWindow", "Page 3"))
 
     @Slot()
     def async_start(self):
@@ -298,14 +315,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         res_bytes = self.parse_command(self.args)
 
-        async with BleakClient(MAC_ADDRESS) as client:
-            await client.write_gatt_char(ASTRUINO_UUID, bytes(res_bytes, 'utf-8'))
+        try:
+            async with BleakClient(MAC_ADDRESS) as client:
+                await client.write_gatt_char(ASTRUINO_UUID, bytes(res_bytes, 'utf-8'))
 
-            if self.print_debug_messages:
-                print(f"just sent: {res_bytes}")
-                print('signal done')
+                if self.print_debug_messages:
+                    print(f"just sent: {res_bytes}")
+                    self.append_log(f"just sent: {res_bytes}")
+                    print('signal done')
 
-            self.astruino_done.emit()
+                self.astruino_done.emit()
+        except BleakError as e:
+            print(e)
+            self.append_log(str(e))
+            # TODO Gestisci errori
 
     def parse_command(self, command: str) -> str:
         """
@@ -344,6 +367,7 @@ if __name__ == "__main__":
     ui.pushButton_checkConnession.setEnabled(True)
     ui.show()
     ui.setup_camera()
+    ui.timer.stop()  # Annulla lo stream
 
     # No clue what this does, don't touch.
     signal.signal(signal.SIGINT, signal.SIG_DFL)

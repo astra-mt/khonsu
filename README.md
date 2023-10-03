@@ -5,9 +5,12 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 
 **Work in progress**
 
-- [ ] Assicurarsi che la connessione sia stata stabilita. Attualmente lancia eccezione.
+- [ ] Assicurarsi che la connessione sia stata correttamente stabilita. Attualmente lancia eccezione.
 - [ ] Gestire comportamento quando chiudi la GUI durante un'operazione send-astruino
-- [ ] Ricevere output e stamparlo su terminale in app
+- [ ] Ricevere output da arduino e stamparlo su terminale in app
+- [ ] Trova widget migliore per il log. Serve che abbia degli eventi "valueChanged" così da potere abilitare e disabilitare il tasto.
+- [ ] Implementare widget da mettere nella toolbox per il controllo della cam che possa fermare lo stream (timer.stop()) e farlo riprendere (timer.start(10))
+- [ ] Sistemare grandezza stream
 
 # Old, ignore
 
