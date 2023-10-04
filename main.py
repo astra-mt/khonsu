@@ -177,6 +177,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.async_start()
 
         # TODO check IF it actually worked
+        # e gestisci le eccezioni. attualmente se hai un'eccezione te ne accorgi
+        # ma non la gestisci e hai tutto bloccato
 
         # print(e)
         # self.status_bar.showMessage(str(e))
@@ -275,7 +277,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.display_video_stream)
-        self.timer.start(5)
+        self.timer.start(10) # credo sia polling time
 
         # TODO Implement two buttons for the camera
         # You can start and stop the video stream by using self.timer.start(number) and self.timer.stop()
@@ -293,8 +295,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         frame = cv2.flip(frame, 1)
         image = qimage2ndarray.array2qimage(frame)  # SOLUTION FOR MEMORY LEAK
 
-        if image is not self.old_image:
-            self.videoWidget.setPixmap(QPixmap.fromImage(image))
+        # if image is not self.old_image:
+        #     self.videoWidget.setPixmap(QPixmap.fromImage(image))
+
+        self.videoWidget.setPixmap(QPixmap.fromImage(image))
 
         self.old_image = image
 
@@ -329,6 +333,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             print(e)
             self.append_log(str(e))
             # TODO Gestisci errori
+            if str(e).startswith('No powered Bluetooth'):
+                self.pushButton_checkConnession.setEnabled(True)
+                
+            if str(e).startswith('Device with address'):
+                self.pushButton_checkConnession.setEnabled(True)
+                
+
+            self.status_bar.showMessage((str(e)))
+
 
     def parse_command(self, command: str) -> str:
         """
@@ -367,7 +380,7 @@ if __name__ == "__main__":
     ui.pushButton_checkConnession.setEnabled(True)
     ui.show()
     ui.setup_camera()
-    ui.timer.stop()  # Annulla lo stream
+    # ui.timer.stop()  # Annulla lo stream
 
     # No clue what this does, don't touch.
     signal.signal(signal.SIGINT, signal.SIG_DFL)
