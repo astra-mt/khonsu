@@ -57,27 +57,6 @@ with these ones
 
 Nomenclatura: `movement.ui`, `movement,py`, `MovementView(QtWidgets.QWidget)`, `MovementWidget()`
 
-# Old, ignore
-
-## Translating the UI in code
-
-### Installing pyuic5
-
-- Identify where you have installed python (the folder where ypu have python.exe)
-- Open a cmd in that folder *(NOTE: if it is on the C main drive open the terminal with administrator privileges)* and execute: 
-
-        python -m pip install PyQt5
-
-After you have successfully installed PyQt5 you should be able to execute inside a terminal the command
-
-    pyuic5
-
-The command:
-
-    pyuic5 --output=./new_main.py ./new_main.ui
-
-will generate the `new_main.py` file inside the folder where you execute the command
-
 ## Project Folders
  - The `res` folder contains the resources used by the interface(images,etc..)
  - The `ui` folder will contain the .ui file obtained with QT Designer
