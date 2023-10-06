@@ -9,7 +9,6 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 - [ ] Gestire comportamento quando chiudi la GUI durante un'operazione send-astruino
 - [ ] Ricevere output da arduino e stamparlo su terminale in app
 - [ ] Trova widget migliore per il log. Serve che abbia degli eventi "valueChanged" così da potere abilitare e disabilitare il tasto.
-- [ x ] Implementare widget da mettere nella toolbox per il controllo della cam che possa fermare lo stream (timer.stop()) e farlo riprendere (timer.start(10))
 - [ ] Sistemare grandezza stream
 - [ ] GUI [Commands to implement](https://www.notion.so/astra-team/Documentazione-comandi-e445912294c94576b910cc75a6e5b087)
 - [ ] Implementare file .env
