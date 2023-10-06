@@ -18,12 +18,14 @@ from .async_helper import AsyncHelper
 
 from .ui.movement import MovementView
 from .ui.arm import ArmView
+from .ui.camera import CameraView   
 
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
 # TODO Soluzione: https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1
 
-CAM_URL = "http://192.168.1.18"
+# CAM_URL = "http://192.168.1.18"
+CAM_URL = "http://10.100.10.224"
 MAC_ADDRESS = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
@@ -119,6 +121,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.armWidget = ArmView()
         self.armWidget.setObjectName("armWidget")
         self.toolBox.addItem(self.armWidget, "")
+        self.cameraWidget = CameraView()
+        self.cameraWidget.setObjectName("cameraWidgets")
+        self.toolBox.addItem(self.cameraWidget, "")
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
         self.toolBox.addItem(self.page_3, "")
@@ -142,6 +147,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 self.movementWidget.spinBox_rpm.value())
         )
 
+        self.cameraWidget.pushButton_startCamera.clicked.connect(
+            lambda: self.handle_pushButton_startCamera()
+        )
+
+        self.cameraWidget.pushButton_stopCamera.clicked.connect(
+            lambda: self.handle_pushButton_stopCamera()
+        )
+
         self.movementWidget.pushButton_stop.clicked.connect(
             lambda: self.handle_pushButton_movement(0)
         )
@@ -155,6 +168,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         )
 
     # Handles
+
+    def handle_pushButton_startCamera(self):
+        self.timer.start(20)
+
+    def handle_pushButton_stopCamera(self):
+        self.timer.stop()
 
     def handle_pushButton_movement(self, val):
         if self.print_debug_messages:
@@ -262,6 +281,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.toolBox.setItemText(self.toolBox.indexOf(
             self.armWidget), _translate("MainWindow", "Arm"))
         self.toolBox.setItemText(self.toolBox.indexOf(
+            self.cameraWidget), _translate("MainWindow", "Camera"))
+        self.toolBox.setItemText(self.toolBox.indexOf(
             self.page_3), _translate("MainWindow", "Page 3"))
 
     # Camera
@@ -277,7 +298,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.display_video_stream)
-        self.timer.start(10) # credo sia polling time
+        self.timer.start(10)  # credo sia polling time
 
         # TODO Implement two buttons for the camera
         # You can start and stop the video stream by using self.timer.start(number) and self.timer.stop()
@@ -335,13 +356,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             # TODO Gestisci errori
             if str(e).startswith('No powered Bluetooth'):
                 self.pushButton_checkConnession.setEnabled(True)
-                
+
             if str(e).startswith('Device with address'):
                 self.pushButton_checkConnession.setEnabled(True)
-                
 
             self.status_bar.showMessage((str(e)))
-
 
     def parse_command(self, command: str) -> str:
         """
@@ -380,7 +399,7 @@ if __name__ == "__main__":
     ui.pushButton_checkConnession.setEnabled(True)
     ui.show()
     ui.setup_camera()
-    # ui.timer.stop()  # Annulla lo stream
+    ui.timer.stop()  # Ann    ulla lo stream
 
     # No clue what this does, don't touch.
     signal.signal(signal.SIGINT, signal.SIG_DFL)
