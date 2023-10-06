@@ -11,7 +11,7 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 - [ ] Trova widget migliore per il log. Serve che abbia degli eventi "valueChanged" così da potere abilitare e disabilitare il tasto.
 - [ ] Sistemare grandezza stream
 - [ ] GUI [Commands to implement](https://www.notion.so/astra-team/Documentazione-comandi-e445912294c94576b910cc75a6e5b087)
-- [ ] Implementare file .env
+- [ ] Implementare file `.env`
 
 
 ## Come creare un widget
@@ -57,11 +57,14 @@ with these ones
 
 Nomenclatura: `movement.ui`, `movement,py`, `MovementView(QtWidgets.QWidget)`, `MovementWidget()`
 
-## Project Folders
- - The `res` folder contains the resources used by the interface(images,etc..)
- - The `ui` folder will contain the .ui file obtained with QT Designer
 
----
+
+`pip install pyuic5-tool`
+
+
+## Project Folders
+ - The `res` folder contains the resources used by the interface (images, etc.)
+ - The `ui` folder will contain the .ui file obtained with QT Designer
 
 ## Debugging
 
