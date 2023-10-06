@@ -8,8 +8,6 @@ import cv2
 import sys
 import time
 import signal
-import asyncio
-import datetime
 import qimage2ndarray
 from datetime import datetime
 
@@ -18,7 +16,7 @@ from .async_helper import AsyncHelper
 
 from .ui.movement import MovementView
 from .ui.arm import ArmView
-from .ui.camera import CameraView   
+from .ui.camera import CameraView
 
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
@@ -29,20 +27,21 @@ CAM_URL = "http://10.100.10.224"
 MAC_ADDRESS = "01:23:45:67:A6:31"
 ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
+POLLING_TIME = 10  # time in ms, used to update the camera frames
 SAVELOG_PATH = os.getcwd()
 
 
 class Ui_MainWindow(QtWidgets.QMainWindow):
 
-    video_size = QSize(320, 240)
+    print_debug_messages = True
+
+    args = ""  # arguments in astruino_send_command
 
     astruino_start = Signal()
     astruino_done = Signal()
 
-    print_debug_messages = True
-    args = ""  # arguments in astruino_send_command
-
-    old_image = None
+    video_size = QSize(320, 240)
+    old_frame = None
 
     def __init__(self):
         super().__init__()
@@ -170,7 +169,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     # Handles
 
     def handle_pushButton_startCamera(self):
-        self.timer.start(20)
+        self.timer.start(POLLING_TIME)
 
     def handle_pushButton_stopCamera(self):
         self.timer.stop()
@@ -298,30 +297,29 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.display_video_stream)
-        self.timer.start(10)  # credo sia polling time
-
-        # TODO Implement two buttons for the camera
-        # You can start and stop the video stream by using self.timer.start(number) and self.timer.stop()
+        self.timer.start(POLLING_TIME)  # credo sia polling time
 
     def display_video_stream(self):
         """
-            Read frame from camera and repaint QLabel widget.
-            Awfully dirty solution
+            Read frame from camera and repaint QLabel widget (videoWidget).
+            Awfully dirty solution.
         """
 
-        # TODO there must be a better way to do this ...
+        # TODO find a a better way to do this ...
 
         _, frame = self.capture.read()
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        frame = cv2.flip(frame, 1)
-        image = qimage2ndarray.array2qimage(frame)  # SOLUTION FOR MEMORY LEAK
+        # https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCapture.html#a473055e77dd7faa4d26d686226b292c1
 
-        # if image is not self.old_image:
-        #     self.videoWidget.setPixmap(QPixmap.fromImage(image))
+        if frame and (frame is not self.old_frame):
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.flip(frame, 1)
+            image = qimage2ndarray.array2qimage(
+                frame)  # SOLUTION FOR MEMORY LEAK
+            self.videoWidget.setPixmap(QPixmap.fromImage(image))
+            if self.print_debug_messages:
+                print(f'new frame: {datetime.now()}')
 
-        self.videoWidget.setPixmap(QPixmap.fromImage(image))
-
-        self.old_image = image
+        self.old_frame = frame
 
     @Slot()
     def async_start(self):
@@ -335,10 +333,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         """
         Sends a command to Astruino
         example command: "napoli juve 3"
-        calls parse_command() and sends b"napoli-juve-3" to Astruino
         """
 
-        res_bytes = self.parse_command(self.args)
+        res_bytes = self.args
 
         try:
             async with BleakClient(MAC_ADDRESS) as client:
@@ -350,44 +347,58 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                     print('signal done')
 
                 self.astruino_done.emit()
+                # self.timer_astruino_send_command.stop()
+                return
         except BleakError as e:
-            print(e)
-            self.append_log(str(e))
-            # TODO Gestisci errori
+            # TODO Non riesco ad importare l'oggetto Errore corretto
+            # Faccio questa porcata per uscirmene in fretta, sistemare dopo
+
             if str(e).startswith('No powered Bluetooth'):
-                self.pushButton_checkConnession.setEnabled(True)
+                # self.pushButton_checkConnession.setEnabled(True)
+                pass
 
             if str(e).startswith('Device with address'):
-                self.pushButton_checkConnession.setEnabled(True)
+                # self.pushButton_checkConnession.setEnabled(True)
+                pass
 
+            if str(e).startswith('failed to discover'):
+                print('Timout detected!')
+
+            print(e)
+            self.append_log(str(e))
             self.status_bar.showMessage((str(e)))
 
-    def parse_command(self, command: str) -> str:
-        """
-            Returns a parsed command
-            command: str
+            self.set_all_buttons_enabled(False)
+            self.pushButton_checkConnession.setEnabled(True)
 
-            command="napoli juve 3"
-            res = "napoli-juve-3"
+            # self.timer_astruino_send_command.stop()
+            return
 
+    # def parse_command(self, command: str) -> str:
+    #     """
+    #         Returns a parsed command
+    #         command: str
 
-            Choosing # self.args = "aaaaabbbbbaaaaabbbbb" will result in a warning
-        """
+    #         command="napoli juve 3"
+    #         res = "napoli-juve-3"
 
-        command = command.lower()
-        res = command.replace(' ', '-')
+    #         Choosing # self.args = "aaaaabbbbbaaaaabbbbb" will result in a warning
+    #     """
 
-        if len(command) > 18:
-            print(
-                f'Warning: parsed command is longer than 18 characters.\nThe command was stripped down from/to\n{command}\n{command[0:18]}'
-            )
-            command = command[0:18]
+    #     command = command.lower()
+    #     res = command.replace(' ', '-')
 
-        if self.print_debug_messages:
-            print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
+    #     if len(command) > 18:
+    #         print(
+    #             f'Warning: parsed command is longer than 18 characters.\nThe command was stripped down from/to\n{command}\n{command[0:18]}'
+    #         )
+    #         command = command[0:18]
 
-        # Ho provato a ritornare bytes(res, 'utf-8') ma non funziona
-        return res
+    #     if self.print_debug_messages:
+    #         print('command parsed: ', res, ' binary: ', bytes(res, "utf-8"))
+
+    #     # Ho provato a ritornare bytes(res, 'utf-8') ma non funziona
+    #     return res
 
 
 if __name__ == "__main__":
@@ -396,10 +407,12 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     async_helper = AsyncHelper(ui, ui.astruino_send_command)
     ui.set_all_buttons_enabled(False)
+    # così prima va fatta la checkConnession
     ui.pushButton_checkConnession.setEnabled(True)
+
     ui.show()
     ui.setup_camera()
-    ui.timer.stop()  # Ann    ulla lo stream
+    ui.timer.stop()  # Per non far partire immediatamente lo stream
 
     # No clue what this does, don't touch.
     signal.signal(signal.SIGINT, signal.SIG_DFL)
