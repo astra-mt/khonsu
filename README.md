@@ -12,18 +12,53 @@ A graphical user interface to monitor our rover "Scout". Currently migrating fro
 - [ ] Sistemare grandezza stream
 - [ ] GUI [Commands to implement](https://www.notion.so/astra-team/Documentazione-comandi-e445912294c94576b910cc75a6e5b087)
 - [ ] Implementare file `.env`
+- [ ] Implement [`requirements.txt`](https://www.google.com/search?client=firefox-b-d&q=what+is+a+requirement+file+python)
 
 
-## Come creare un widget
+# Installation
+
+TODO
+
+# Development
+
+Clone the repo with
+
+    git clone https://github.com/astra-mt/scout.git
+
+and change the directory with
+
+    cd khonsu
+
+all the files you need for development will be here! Open VSCode or any other IDE of your choice there.
+
+TODO add `requirements` and run them
+
+
+Running the app from `khonsu` will result in an error. Instead, cd into the previous folder `cd ..`, and run it with `python -m khonsu.main`
+
+TODO Fix that
+
+## How to create a Widget with QtCreator
+TODO
+
+## How to generate a widget starting from a .ui file
+
+Pre requisites:
+    
+    pip install pyuic5-tool
+    pip install pyside6
+
+### Example assuming "Movement" as widget name
+We are going to create a Widget called "Movement", and place it inside the `.ui` folder
 
 The command:
 
-    pyuic5 --output=./newfile.py ./newfile.ui
+    pyuic5 --output=./ui/movement.py ./ui/movement.ui
 
-will generate the `new_main.py` file inside the folder where you execute the command.
-The resulting file uses PyQt5
+will generate the `movement.py` file inside the folder where you executed the command.
+The resulting file uses PyQt5 (but we're currently using PySide6!)
 
-Replace `PyQt5` with `PySide6`, and then substitute the following lines:
+Open the newly generated file, and replace the following lines:
 
 ``` python
 
@@ -47,20 +82,71 @@ with these ones
     ...
 
 
-    class ExampleWidget(QtWidgets.QWidget):
+    class MovementWidget(QtWidgets.QWidget):
         def __init__(self):
             super().__init__()
             Form = self
-            Form.setObjectName("ExampleWidget")
-            Form.setAccessibleName("ExampleWidget")
+            Form.setObjectName("MovementWidget")
+            Form.setAccessibleName("MovementWidget")
+```
+adapting your widget name as needed.
+
+Nomenclature: `movement.ui`, `movement,py`, `MovementView(QtWidgets.QWidget)`, `MovementWidget()`
+
+##  Add new Widget in the Toolbox
+We are going to add the widget `Movement` we previously generated and show it in the toolbox (the red square) after you generated a file
+
+![Locate the toolbox](images/where_is_toolbox.png)
+
+The toolbox accepts widgets as children. An empty template, called `page_3`, can be found somewhere in the `main.py` file, inside the `ui_init()` function.
+
+Import the class in the Movement Widget in the main file
+
+    from .ui.movement import MovementView
+
+Copy and paste the following lines
+``` python
+    def __init__(self):
+    ...
+    self.page_3 = QtWidgets.QWidget()
+    self.page_3.setObjectName("page_3")
+    self.toolBox.addItem(self.page_3, "")
+
+    ...
+    def retranslateUi(self):
+        self.toolBox.setItemText(self.toolBox.indexOf(
+        self.page_3), _translate("MainWindow", "Page 3"))
 ```
 
-Nomenclatura: `movement.ui`, `movement,py`, `MovementView(QtWidgets.QWidget)`, `MovementWidget()`
+and turn them into these
+``` python
+    def __init__(self):
+    ...
+    self.movementWidget = QtWidgets.QWidget()
+    self.movementWidget.setObjectName("movementWidget")
+    self.toolBox.addItem(self.movementWidget, "")
 
+    ...
+    def retranslateUi(self):
+        self.toolBox.setItemText(self.toolBox.indexOf(
+        self.movementWidget), _translate("MainWindow", "Movement"))
+```
+Common error: never touch "MainWindow"
 
+If you run the application everything should run!
 
-`pip install pyuic5-tool`
+## Camera
 
+At the moment, the camera is highly problematic. To stop running the camera simply comment out these lines in the main
+
+``` python
+
+    if __name__ == "__main__":
+        ...
+        ui.setup_camera()
+        ui.timer.stop()
+        ...
+```
 
 ## Project Folders
  - The `res` folder contains the resources used by the interface (images, etc.)
