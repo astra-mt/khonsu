@@ -14,9 +14,9 @@ from datetime import datetime
 from bleak import BleakScanner, BleakClient, BleakError
 from .async_helper import AsyncHelper
 
-from .ui.movement import MovementView
-from .ui.arm import ArmView
-from .ui.camera import CameraView
+from .ui.movement import MovementWidget
+from .ui.arm import ArmWidget
+from .ui.camera import CameraWidget
 
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
@@ -114,18 +114,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.verticalLayout.addWidget(self.line)
         self.toolBox = QtWidgets.QToolBox(self.scrollAreaWidgetContents)
         self.toolBox.setObjectName("toolBox")
-        self.movementWidget = MovementView()
-        self.movementWidget.setObjectName("MovementView")
+        self.movementWidget = MovementWidget()
+        self.movementWidget.setObjectName("MovementWidget")
         self.toolBox.addItem(self.movementWidget, "")
-        self.armWidget = ArmView()
+        self.armWidget = ArmWidget()
         self.armWidget.setObjectName("armWidget")
         self.toolBox.addItem(self.armWidget, "")
-        self.cameraWidget = CameraView()
+        self.cameraWidget = CameraWidget()
         self.cameraWidget.setObjectName("cameraWidgets")
         self.toolBox.addItem(self.cameraWidget, "")
-        self.tempWidget = QtWidgets.QWidget()
-        self.tempWidget.setObjectName("tempWidget")
-        self.toolBox.addItem(self.tempWidget, "")
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setObjectName("page_3")
         self.toolBox.addItem(self.page_3, "")
@@ -414,8 +411,8 @@ if __name__ == "__main__":
     ui.pushButton_checkConnession.setEnabled(True)
 
     ui.show()
-    ui.setup_camera()
-    ui.timer.stop()  # Per non far partire immediatamente lo stream
+    # ui.setup_camera()
+    # ui.timer.stop()  # Per non far partire immediatamente lo stream
 
     # No clue what this does, don't touch.
     signal.signal(signal.SIGINT, signal.SIG_DFL)

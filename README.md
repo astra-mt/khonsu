@@ -76,11 +76,9 @@ with these ones
 
 ``` python
 
-
     from PySide6 import ... 
 
     ...
-
 
     class MovementWidget(QtWidgets.QWidget):
         def __init__(self):
@@ -134,6 +132,12 @@ and turn them into these
 Common error: never touch "MainWindow"
 
 If you run the application everything should run!
+
+## Widget Signals and function handling
+
+This is what we use to set data in the GUI
+
+
 
 ## Camera
 

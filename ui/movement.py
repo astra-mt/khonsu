@@ -2,12 +2,12 @@ from PySide6 import QtCore, QtGui, QtWidgets
 from .. import signals
 
 
-class MovementView(QtWidgets.QWidget):
+class MovementWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
-        Form.setObjectName("MovementView")
-        Form.setAccessibleName("MovementView")
+        Form.setObjectName("MovementWidget")
+        Form.setAccessibleName("MovementWidget")
         # Form.resize(512, 512)
         self.gridLayout = QtWidgets.QGridLayout(Form)
         self.gridLayout.setObjectName("gridLayout")

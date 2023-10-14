@@ -2,12 +2,12 @@ from PySide6 import QtCore, QtGui, QtWidgets
 # from .. import signals
 
 
-class ArmView(QtWidgets.QWidget):
+class ArmWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
-        Form.setObjectName("ArmView")
-        Form.setAccessibleName("ArmView")
+        Form.setObjectName("ArmWidget")
+        Form.setAccessibleName("ArmWidget")
         # Form.resize(400, 300)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")

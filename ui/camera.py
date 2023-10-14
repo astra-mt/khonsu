@@ -11,12 +11,12 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 
-class CameraView(QtWidgets.QWidget):
+class CameraWidget(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         Form = self
-        Form.setObjectName("CameraView")
-        Form.setAccessibleName("CameraView")
+        Form.setObjectName("CameraWidget")
+        Form.setAccessibleName("CameraWidget")
         # Form.resize(400, 300)
         self.verticalLayout = QtWidgets.QVBoxLayout(Form)
         self.verticalLayout.setObjectName("verticalLayout")
