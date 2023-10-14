@@ -137,7 +137,24 @@ If you run the application everything should run!
 
 This is what we use to set data in the GUI
 
+We are going to change spinbox value (the number selector under the dial), according to the dial position.
 
+First, write this inside the `MovementWidget` class
+
+``` python
+    self.dial.valueChanged.connect(
+        lambda: self.handle_valueChanged_dial()
+    )
+```
+
+This has to be read like this: whenever the dial changes its value, execute the method `handle_valueChanged_dial`, which is:
+
+
+``` python
+    def handle_valueChanged_dial():
+        self.spinBox_rpm.setValue(self.dial.value())
+```
+which can be read as: whenever this method is invoked, change the spinbox counter to the current dial value
 
 ## Camera
 
