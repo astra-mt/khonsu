@@ -219,7 +219,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 os.makedirs(path)
             except OSError as e:
                 print(e)
-                        # TODO Scrivi se solo se il file non è vuoto    
+            
+            
+            # TODO write only if the file to write is not empty    
+        
+        
         if os.path.exists(path):
             path = os.path.join(path, f"log_{current_time}")
             log_file = open(path, "x")
@@ -229,6 +233,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             log_file.close()
             self.status_bar.showMessage(f'Log written, open {path}')
             
+
+            #TODO Try perhaps to do it without creating and deleting the file
 
             log_file = open(path, "r")
             log_file_readed = log_file.read()
