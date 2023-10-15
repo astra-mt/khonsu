@@ -219,16 +219,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 os.makedirs(path)
             except OSError as e:
                 print(e)
-
+                        # TODO Scrivi se solo se il file non è vuoto    
         if os.path.exists(path):
             path = os.path.join(path, f"log_{current_time}")
             log_file = open(path, "x")
-            # TODO Scrivi se solo se il file non è vuoto
             log_file.write(
                 self.label_log.text()
             )
-
+            log_file.close()
             self.status_bar.showMessage(f'Log written, open {path}')
+            
+
+            log_file = open(path, "r")
+            log_file_readed = log_file.read()
+            if len(log_file_readed) == 0:
+               log_file.close()
+               os.remove(path)
+               self.status_bar.showMessage(f'File Deleted: Empty file')
+
+
 
     # Log
 
