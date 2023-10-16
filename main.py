@@ -226,23 +226,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         
         if os.path.exists(path):
             path = os.path.join(path, f"log_{current_time}")
-            log_file = open(path, "x")
-            log_file.write(
-                self.label_log.text()
-            )
-            log_file.close()
-            self.status_bar.showMessage(f'Log written, open {path}')
             
-
-            #TODO Try perhaps to do it without creating and deleting the file
-
-            log_file = open(path, "r")
-            log_file_readed = log_file.read()
-            if len(log_file_readed) == 0:
-               log_file.close()
-               os.remove(path)
-               self.status_bar.showMessage(f'File Deleted: Empty file')
-
+            if self.label_log.text():
+                log_file = open(path, "x")
+                log_file.write(
+                    self.label_log.text()
+                )
+                log_file.close()
+                self.status_bar.showMessage(f'Log written, open {path}')
+            else:
+                self.status_bar.showMessage(f'File Not Saved: Empty file')
+            
 
 
     # Log
