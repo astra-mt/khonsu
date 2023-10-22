@@ -330,6 +330,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.old_frame = frame
 
+
+
     @Slot()
     def async_start(self):
         self.astruino_start.emit()
