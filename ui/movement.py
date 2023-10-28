@@ -1,5 +1,6 @@
-from PySide6 import QtCore, QtGui, QtWidgets
-from .. import signals
+from PySide6 import QtCore, QtWidgets
+
+import signals
 
 
 class MovementWidget(QtWidgets.QWidget):
