@@ -1,20 +1,22 @@
+from asyncio import threads
+import threading
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtGui import QIcon, QPixmap, QImage
+from PySide6.QtCore import QSize, QObject, Signal, Slot, QEvent, QTimer
 import os
-import signal
+import cv2
 import sys
 import time
+import signal
+import qimage2ndarray
 from datetime import datetime
 
-import cv2
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtCore import QSize, Signal, QTimer
-from PySide6.QtGui import QIcon, QPixmap
-from bleak import BleakClient, BleakError
+from bleak import BleakScanner, BleakClient, BleakError
+from .async_helper import AsyncHelper
 
-import Utilities
-from async_helper import AsyncHelper
-from ui.arm import ArmWidget
-from ui.camera import CameraWidget
-from ui.movement import MovementWidget
+from .ui.movement import MovementWidget
+from .ui.arm import ArmWidget
+from .ui.camera import CameraWidget
 
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
@@ -180,7 +182,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.movementWidget.dial.setValue(0)
 
         self.args = "movement " + str(val)
-        Utilities.async_start()
+        self.async_start()
 
     def handle_pushButton_checkConnession(self):
         self.status_bar.showMessage('Checking Astruino Connection')
@@ -190,7 +192,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # self.movementWidget.pushButton_go.setChecked(tmp)   # vergognati
 
         self.args = "AT"
-        Utilities.async_start()
+        self.async_start()
 
         # TODO check IF it actually worked
         # e gestisci le eccezioni. attualmente se hai un'eccezione te ne accorgi
