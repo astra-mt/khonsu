@@ -1,22 +1,20 @@
-from PySide6 import QtCore, QtGui, QtWidgets
-from PySide6.QtGui import QIcon, QPixmap
-from PySide6.QtWidgets import QApplication
-from PySide6.QtCore import QSize, QObject, Signal, Slot, QEvent, QTimer
-
 import os
-import cv2
+import signal
 import sys
 import time
-import signal
-import qimage2ndarray
 from datetime import datetime
 
-from bleak import BleakScanner, BleakClient, BleakError
-from .async_helper import AsyncHelper
+import cv2
+from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6.QtCore import QSize, Signal, QTimer
+from PySide6.QtGui import QIcon, QPixmap
+from bleak import BleakClient, BleakError
 
-from .ui.movement import MovementWidget
-from .ui.arm import ArmWidget
-from .ui.camera import CameraWidget
+import Utilities
+from async_helper import AsyncHelper
+from ui.arm import ArmWidget
+from ui.camera import CameraWidget
+from ui.movement import MovementWidget
 
 # Informazioni private in chiaro, ma siamo fortunati, soltanto chi
 # ha accesso alla repository può causare errori fatali!
@@ -182,7 +180,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             self.movementWidget.dial.setValue(0)
 
         self.args = "movement " + str(val)
-        self.async_start()
+        Utilities.async_start()
 
     def handle_pushButton_checkConnession(self):
         self.status_bar.showMessage('Checking Astruino Connection')
@@ -192,7 +190,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         # self.movementWidget.pushButton_go.setChecked(tmp)   # vergognati
 
         self.args = "AT"
-        self.async_start()
+        Utilities.async_start()
 
         # TODO check IF it actually worked
         # e gestisci le eccezioni. attualmente se hai un'eccezione te ne accorgi
@@ -300,7 +298,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
             Initialize camera.
         """
 
-        self.capture = cv2.VideoCapture(CAM_URL + ":81/stream")
+        self.capture = cv2.VideoCapture(0)
+        self.capture.set(cv2.CAP_PROP_BUFFERSIZE, 10)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, self.video_size.width())
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, self.video_size.height())
 
@@ -316,29 +315,18 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         # TODO find a a better way to do this ...
 
-        _, frame = self.capture.read()
         # https://docs.opencv.org/3.4/d8/dfe/classcv_1_1VideoCapture.html#a473055e77dd7faa4d26d686226b292c1
 
-        if frame and (frame is not self.old_frame):
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame = cv2.flip(frame, 1)
-            image = qimage2ndarray.array2qimage(
-                frame)  # SOLUTION FOR MEMORY LEAK
-            self.videoWidget.setPixmap(QPixmap.fromImage(image))
-            if self.print_debug_messages:
-                print(f'new frame: {datetime.now()}')
-
-        self.old_frame = frame
-
-
-
-    @Slot()
-    def async_start(self):
-        self.astruino_start.emit()
-        if self.print_debug_messages:
-            print('signal start')
-
-        self.set_all_buttons_enabled(False)
+        ImageUpdate = QtCore.Signal(QtGui.QImage)
+        while True:
+            ret, frame = self.capture.read()
+            if ret:
+                Image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                FlippedImage = cv2.flip(Image, 1)
+                ConvertToQtFormat = QtGui.QImage(FlippedImage.data, FlippedImage.shape[1], FlippedImage.shape[0], QtGui.QImage.Format_RGB888)
+                Pic = ConvertToQtFormat.scaled(640, 480, QtCore.Qt.KeepAspectRatio) #TODO find the respective of KeepAspectRatio in PySide6
+                self.videoWidget.setPixmap(QPixmap.fromImage(Pic))
+                ImageUpdate.emit(Pic)  #this is to fix 
 
     async def astruino_send_command(self):
         """
@@ -422,7 +410,7 @@ if __name__ == "__main__":
     ui.pushButton_checkConnession.setEnabled(True)
 
     ui.show()
-    # ui.setup_camera()
+    ui.setup_camera()
     # ui.timer.stop()  # Per non far partire immediatamente lo stream
 
     # No clue what this does, don't touch.
