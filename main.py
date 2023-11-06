@@ -12,7 +12,6 @@ import qimage2ndarray
 from datetime import datetime
 from Threads.Camera import Camera
 
-
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
@@ -28,8 +27,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-
-
         self.tabWidget_shellMovementCamera = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget_shellMovementCamera.setObjectName("tabWidget_shellMovementCamera")
         self.tab = QtWidgets.QWidget()
@@ -38,26 +35,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #Creating the label for the Camera
         self.tab_2 = QtWidgets.QLabel(MainWindow)  
         self.tab_2.setObjectName("Camera")
-        #Create a tab with the Label inside
+        #Setting the Label as the tab2 of the Tab widget
         self.tabWidget_shellMovementCamera.addTab(self.tab_2, "Camera")
-
-        # self.listWidget_centralTab = QtWidgets.QListWidget(self.centralwidget)
-        # self.listWidget_centralTab.setMovement(QtWidgets.QListView.Static)
-        # self.listWidget_centralTab.setObjectName("listWidget_centralTab")
-
-
-        
-
-        # # ADD A START CAMERA BUTTON
-        # self.pushButton_startCamera = QtWidgets.QPushButton(MainWindow)
-        # self.pushButton_startCamera.setObjectName("pushButton_startCamera")
-        # self.gridLayout.addWidget(self.pushButton_startCamera)
-
-        # # ADD A STOP CAMERA BUTTON
-        # self.pushButton_stopCamera = QtWidgets.QPushButton(MainWindow)
-        # self.pushButton_stopCamera.setObjectName("pushButton_stopCamera")
-        # self.gridLayout.addWidget(self.pushButton_stopCamera)
-
 
         self.gridLayout.addWidget(self.tabWidget_shellMovementCamera, 0, 0, 2, 1)
         self.listWidget_centralTab = QtWidgets.QListWidget(self.centralwidget)
@@ -77,10 +56,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.listWidget_statusBar.setObjectName("listWidget_statusBar")
         self.gridLayout.addWidget(self.listWidget_statusBar, 3, 0, 1, 3)
 
-
-
-
-
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 676, 18))
@@ -90,28 +65,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
 
-
-
-
-
-
-
-
         self.retranslateUi(MainWindow)
         self.tabWidget_shellMovementCamera.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-        #Create the Thread for the Camera
+        #Create the Thread for the Camera creating an object of the class Camera(QThread class)
+        #Here is calling the INIT method inside the Camera Class
         self.cam = Camera.Camera(self)
-        #print("Camera") #Debugging
+
+        #Start() call the Run method inside the Camera class
         self.cam.start()
-        self.cam.finished.connect(self.close)
+
+        #self.cam.finished.connect(self.close) #To stop the camera, it has to be implemented
+        
+        #Whenever you receive a Signal called updateFrame call the method setImage
         self.cam.updateFrame.connect(self.setImage)
-
-
-
-
-
 
 
     def retranslateUi(self, MainWindow):
@@ -119,13 +87,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.tabWidget_shellMovementCamera.setTabText(self.tabWidget_shellMovementCamera.indexOf(self.tab), _translate("MainWindow", "ShellMovement"))
         self.tabWidget_shellMovementCamera.setTabText(self.tabWidget_shellMovementCamera.indexOf(self.tab_2), _translate("MainWindow", "Camera"))
-        # self.pushButton_startCamera.setText("Start Camera")
-        # self.pushButton_stopCamera.setText("Stop Camera")
 
+   
 
-
-
-
+    #Method to print the frames in the label in the tab2
     @Slot(QImage)
     def setImage(self, image):
         #print("Prendo") #Debugging
@@ -133,17 +98,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
 
-
-
-
-
 if __name__ == "__main__":
 
-    #print("Ciao") #Debugging
     app = QtWidgets.QApplication(sys.argv)
-    
+    #Creating an object of the Class MaiWindow called ui
     ui = Ui_MainWindow()
+
     ui.show()
 
     sys.exit(app.exec())
-
