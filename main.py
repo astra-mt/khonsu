@@ -124,10 +124,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
 
-   
-
-
-
 
 
     @Slot(QImage)
