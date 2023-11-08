@@ -4,7 +4,7 @@ import sys
 import time
 
 import cv2
-from PySide6.QtCore import Qt, QThread, Signal, Slot
+from PySide6.QtCore import Qt, QThread, Signal, Slot, QSize
 from PySide6.QtGui import QAction, QImage, QKeySequence, QPixmap
 from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox,
                                QHBoxLayout, QLabel, QMainWindow, QPushButton,
@@ -41,7 +41,7 @@ class Camera(QThread):
             #Take all the size of the framwe
             h, w, ch = color_frame.shape
             img = QImage(color_frame.data, w, h, ch * w, QImage.Format_RGB888)
-            scaled_img = img.scaled(640, 480, Qt.KeepAspectRatio)
+            scaled_img = img.scaled(301, 281, Qt.AspectRatioMode(1))
             #Emitting the Signal we created before with inside the frame
             self.updateFrame.emit(img)
         #sys.exit(-1)
