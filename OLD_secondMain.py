@@ -58,6 +58,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pushButton_shellMovementSave.setGeometry(QtCore.QRect(60, 240, 61, 31))
         self.pushButton_shellMovementSave.setStyleSheet("QPushButton {\n"
 "border-radius: 3px;\n"
+"border-size: auto;\n"
 "background: rgb(85, 170, 255);\n"
 "}\n"
 "\n"

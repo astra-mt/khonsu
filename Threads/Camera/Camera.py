@@ -43,5 +43,5 @@ class Camera(QThread):
             img = QImage(color_frame.data, w, h, ch * w, QImage.Format_RGB888)
             scaled_img = img.scaled(301, 281, Qt.AspectRatioMode(1))
             #Emitting the Signal we created before with inside the frame
-            self.updateFrame.emit(img)
+            self.updateFrame.emit(scaled_img)
         #sys.exit(-1)
