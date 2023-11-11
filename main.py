@@ -11,6 +11,7 @@ import signal
 import qimage2ndarray
 from datetime import datetime
 from Threads.Camera import Camera
+#from Threads.Sensors import DataSend
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
@@ -165,6 +166,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.sensorDataGroup.setAutoFillBackground(True)
         self.sensorsData = QVBoxLayout(self.sensorDataGroup)
         self.sensorsData.setObjectName(u"sensorsData")
+
         self.textBrowser_sensorsDisplay = QTextBrowser(self.sensorDataGroup)
         self.textBrowser_sensorsDisplay.setObjectName(u"textBrowser_sensorsDisplay")
         sizePolicy2 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
@@ -228,6 +230,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
         self.gridLayout.addWidget(self.sensorDataGroup, 0, 1, 2, 1)
+
+        
+
+
+# STARTING THE SENSOR THREAD ---------------------------------------------
+        
+        
+
 
 
 #-------HAND MOVEMENT ------------------------------------------------------
@@ -759,6 +769,15 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def setImage(self, image):
         self.label_camera.setPixmap(QPixmap.fromImage(image))
 
+
+
+#-- SENSORS THREAD ----------------------------------------------------------------------------------------------
+
+    @Slot(QPlainTextEdit)
+    def getText(self):
+        self.plainTextEdit_console.copy()
+
+
 #----------------TRANSLATION--------------------------------------------------------------------------
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
@@ -782,9 +801,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Battery: none</span></p>\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:8pt;\">Speed: none</span></p></body></html>", None))
         self.pushButton_dataRetrieve.setText(QCoreApplication.translate("MainWindow", u"Retrieve Data", None))
-        self.plainTextEdit_console.setPlainText(QCoreApplication.translate("MainWindow", u"Modifica 1\n"
-"Modifica 2\n"
-"Modifica 3", None))
         self.pushButton_dataSend.setText(QCoreApplication.translate("MainWindow", u" Send Data", None))
         self.textBrowser_handMovementTitle.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
@@ -821,7 +837,9 @@ if __name__ == "__main__":
         app = QtWidgets.QApplication(sys.argv)
         #Creating an object of the Class MaiWindow called ui
         ui = Ui_MainWindow()
-
         ui.show()
+
+
+
 
         sys.exit(app.exec())
