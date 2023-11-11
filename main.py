@@ -13,6 +13,8 @@ from datetime import datetime
 from Threads.Camera import Camera
 #from Threads.Sensors import DataSend
 
+from bleak import BleakScanner, BleakClient, BleakError
+
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
@@ -776,6 +778,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     @Slot(QPlainTextEdit)
     def getText(self):
         self.plainTextEdit_console.copy()
+
+
 
 
 #----------------TRANSLATION--------------------------------------------------------------------------
