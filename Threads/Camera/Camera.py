@@ -9,6 +9,13 @@ from PySide6.QtGui import QAction, QImage, QKeySequence, QPixmap
 from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox,
                                QHBoxLayout, QLabel, QMainWindow, QPushButton,
                                QSizePolicy, QVBoxLayout, QWidget)
+
+
+
+CAM_URL = "http://10.100.10.224"
+
+
+
  #Creating a QThread Class for the camera, a thread is a sub-process processed meanwhile to the "main" process
 class Camera(QThread):
     #To let the Threads communicate with other Threads or with the main we need to send Signal, here we create the signal

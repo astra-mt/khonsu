@@ -3,8 +3,9 @@
 from main import *
 
 #initializing the variables
-MAC_ADDRESS = "000"
-ASTRUINO_UUID = "000"
+MAC_ADDRESS = "01:23:45:67:A6:31"
+ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
+
 
 # ENFF astruino_send_command------------------------------------------------------------
 

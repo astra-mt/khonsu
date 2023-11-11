@@ -28,6 +28,12 @@ from PySide6.QtWidgets import (QApplication, QDial, QFrame, QGridLayout,
     QSizePolicy, QSlider, QStatusBar, QTextBrowser,
     QToolBox, QVBoxLayout, QWidget)
 
+
+SAVELOG_PATH = os.getcwd()
+
+
+
+
 class Ui_MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
