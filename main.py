@@ -579,6 +579,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.pendulum = QVBoxLayout(self.pendulumGroup)
         self.pendulum.setObjectName(u"pendulum")
         self.horizontalSlider_pendulum = QSlider(self.pendulumGroup)
+        self.horizontalSlider_pendulum.setTickPosition(QSlider.TickPosition.TicksBothSides)
+
         self.horizontalSlider_pendulum.setObjectName(u"horizontalSlider_pendulum")
         self.horizontalSlider_pendulum.setMinimum(-30)
         self.horizontalSlider_pendulum.setMaximum(30)
@@ -623,6 +625,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.straightMovement = QVBoxLayout(self.straightMovementGroup)
         self.straightMovement.setObjectName(u"straightMovement")
         self.verticalSlider_straightMovement = QSlider(self.straightMovementGroup)
+        self.verticalSlider_straightMovement.setTickPosition(QSlider.TickPosition.TicksBothSides)
         self.verticalSlider_straightMovement.setObjectName(u"verticalSlider_straightMovement")
         sizePolicy2.setHeightForWidth(self.verticalSlider_straightMovement.sizePolicy().hasHeightForWidth())
         self.verticalSlider_straightMovement.setSizePolicy(sizePolicy2)
