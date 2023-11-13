@@ -1,5 +1,16 @@
 #HERE IS A FILE TO HANDLE ALL THE SENSOR DATA INSIDE THE CENTRAL WINDOW
 
+
+import os
+import sys
+import time
+
+import cv2
+from PySide6.QtCore import Qt, QThread, Signal, Slot, QSize
+from PySide6.QtGui import QAction, QImage, QKeySequence, QPixmap
+from PySide6.QtWidgets import (QApplication, QComboBox, QGroupBox,
+                               QHBoxLayout, QLabel, QMainWindow, QPushButton,
+                               QSizePolicy, QVBoxLayout, QWidget)
 from main import *
 
 #initializing the variables
@@ -10,14 +21,18 @@ ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 # ENFF astruino_send_command------------------------------------------------------------
 
 
-class Astruino():
+class Astruino(QThread):
 
     
-    def __init__(self, value):
+    def __init__(self, value, parent=None):
+        QThread.__init__(self, parent)
         self.args = value
         self.astruino_start = Signal()
         self.astruino_done = Signal()
 
+    def run(self):
+        print("The Thread Starts")
+        self.astruino_send_command()
 
     async def astruino_send_command(self):
         """

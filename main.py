@@ -11,6 +11,7 @@ import signal
 import qimage2ndarray
 from datetime import datetime
 from Threads.Camera import Camera
+from Threads.Sensors import Sensors
 # from Threads.Sensors import Astruino
 
 from bleak import BleakScanner, BleakClient, BleakError
@@ -164,7 +165,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 #-------SENSOR DATA AND CONSOLE (MIDDLE COLUMN) ------------------------------------------------------
 
-
         self.sensorDataGroup = QGroupBox(self.centralwidget)
         self.sensorDataGroup.setObjectName(u"sensorDataGroup")
         sizePolicy.setHeightForWidth(self.sensorDataGroup.sizePolicy().hasHeightForWidth())
@@ -243,7 +243,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
 # STARTING THE SENSOR THREAD ---------------------------------------------
-        
+
         
 
 
@@ -745,7 +745,8 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #Create the Thread for the Camera creating an object of the class Camera(QThread class)
         #Here is calling the INIT method inside the Camera Class
         self.cam = Camera.Camera(self)
-
+        self.astro = Sensors.Astruino(self)
+        self.astro.start()
         #Start() call the Run method inside the Camera class
         self.cam.start()
 
