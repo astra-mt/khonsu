@@ -9,18 +9,14 @@ ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
 # ENFF astruino_send_command------------------------------------------------------------
 
+
 class Astruino():
 
-    def __init__(self) -> None:
-        pass
-
-
-    def async_start(self):
-        self.astruino_start.emit()
-        if self.print_debug_messages:
-            print('signal start')
-
-        self.set_all_buttons_enabled(False)
+    
+    def __init__(self, value):
+        self.args = value
+        self.astruino_start = Signal()
+        self.astruino_done = Signal()
 
 
     async def astruino_send_command(self):
@@ -35,15 +31,16 @@ class Astruino():
             async with BleakClient(MAC_ADDRESS) as client:
                 await client.write_gatt_char(ASTRUINO_UUID, bytes(res_bytes, 'utf-8'))
 
-                if self.print_debug_messages:
-                    print(f"just sent: {res_bytes}")
+                # if self.print_debug_messages:
+                #     print(f"just sent: {res_bytes}")
 
-                    self.append_log(f"just sent: {res_bytes}")
-                    print('signal done')
+                #     self.append_log(f"just sent: {res_bytes}")
+                #     print('signal done')
 
                 self.astruino_done.emit()
                 # self.timer_astruino_send_command.stop()
                 return
+            
         except BleakError as e:
             # TODO Non riesco ad importare l'oggetto Errore corretto
             # Faccio questa porcata per uscirmene in fretta, sistemare dopo
@@ -60,11 +57,11 @@ class Astruino():
                 print('Timout detected!')
 
             print(e)
-            self.append_log(str(e))
-            self.status_bar.showMessage((str(e)))
+            # self.append_log(str(e))
+            # self.status_bar.showMessage((str(e)))
 
-            self.set_all_buttons_enabled(False)
-            self.pushButton_checkConnession.setEnabled(True)
+            # self.set_all_buttons_enabled(False)
+            # self.pushButton_checkConnession.setEnabled(True)
 
             # self.timer_astruino_send_command.stop()
             return

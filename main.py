@@ -11,7 +11,7 @@ import signal
 import qimage2ndarray
 from datetime import datetime
 from Threads.Camera import Camera
-#from Threads.Sensors import DataSend
+# from Threads.Sensors import Astruino
 
 from bleak import BleakScanner, BleakClient, BleakError
 
@@ -784,12 +784,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 #-- SENSORS THREAD ----------------------------------------------------------------------------------------------
 
-    @Slot(QPlainTextEdit)
-    def getText(self):
-        self.plainTextEdit_console.copy()
+#     @Slot(QPlainTextEdit)
+#     def getText(self):
+#         self.plainTextEdit_console.copy()
 
-
-
+    
+    
 
 #----------------TRANSLATION--------------------------------------------------------------------------
     def retranslateUi(self, MainWindow):
@@ -851,7 +851,7 @@ if __name__ == "__main__":
         #Creating an object of the Class MaiWindow called ui
         ui = Ui_MainWindow()
         ui.show()
-
+        
 
 
 
