@@ -23,10 +23,9 @@ ASTRUINO_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 
 class Astruino(QThread):
 
-    
     def __init__(self, value, parent=None):
         QThread.__init__(self, parent)
-        self.args = value
+        self._communicationString = value
         self.astruino_start = Signal()
         self.astruino_done = Signal()
 
@@ -35,17 +34,20 @@ class Astruino(QThread):
 
         loop = asyncio.new_event_loop()
         tasks = list()
-        tasks.append(loop.create_task(self.astruino_send_command()))
+        tasks.append(loop.create_task(self.astruino_send_command(self._communicationString)))
         loop.run_until_complete(asyncio.wait(tasks))
         loop.close()
 
-    async def astruino_send_command(self):
+        print("Ending communication")
+
+    async def astruino_send_command(self, value):
         """
         Sends a command to Astruino
         example command: "napoli juve 3"
         """
 
-        res_bytes = self.args
+        res_bytes = value
+        print("print of communicationString in astruino_send_commmand: ", value)
 
         try:
             async with BleakClient(MAC_ADDRESS) as client:

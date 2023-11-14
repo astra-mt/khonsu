@@ -1,7 +1,10 @@
+from typing import Optional
+
+import PySide6
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtGui import QIcon, QPixmap, QImage
 from PySide6.QtWidgets import QApplication,QMainWindow
-from PySide6.QtCore import QSize, QObject, Signal, Slot, QEvent, QTimer
+from PySide6.QtCore import QSize, QObject, Signal, Slot, QEvent, QTimer, SIGNAL
 
 import os
 import cv2
@@ -739,14 +742,17 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.toolBox_shellMovementCamera.addItem(self.toolBox_shellMovementCameraPage2, u"")
 
+        self.pushButton_dataSend.clicked.connect(
+                lambda : self.astruinoCommunication()
+        )
 
-        #------------------ STARTING THE CAMERA -----------------------------------------
 
+#------------------ STARTING THE THREADS -----------------------------------------
+
+        self.astro = None
         #Create the Thread for the Camera creating an object of the class Camera(QThread class)
         #Here is calling the INIT method inside the Camera Class
         self.cam = Camera.Camera(self)
-        self.astro = Sensors.Astruino(self)
-        self.astro.start()
         #Start() call the Run method inside the Camera class
         self.cam.start()
 
@@ -784,10 +790,14 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
 #-- SENSORS THREAD ----------------------------------------------------------------------------------------------
+    # starting the new thread when the button "pushButton_dataSend" is clicked, we take the string from the console
+    # and we send it to the astruino
+    def astruinoCommunication(self):
+        value = self.plainTextEdit_console.toPlainText()
+        self.plainTextEdit_console.clear()
+        self.astro = Sensors.Astruino(value, self)
+        self.astro.start()
 
-#     @Slot(QPlainTextEdit)
-#     def getText(self):
-#         self.plainTextEdit_console.copy()
 
     
     
