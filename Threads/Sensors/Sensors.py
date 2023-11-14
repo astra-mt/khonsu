@@ -1,9 +1,9 @@
 #HERE IS A FILE TO HANDLE ALL THE SENSOR DATA INSIDE THE CENTRAL WINDOW
-
-
+import asyncio
 import os
 import sys
 import time
+from asyncio import events
 
 import cv2
 from PySide6.QtCore import Qt, QThread, Signal, Slot, QSize
@@ -31,8 +31,13 @@ class Astruino(QThread):
         self.astruino_done = Signal()
 
     def run(self):
-        print("The Thread Starts")
-        self.astruino_send_command()
+        print("Starting communication")
+
+        loop = asyncio.new_event_loop()
+        tasks = list()
+        tasks.append(loop.create_task(self.astruino_send_command()))
+        loop.run_until_complete(asyncio.wait(tasks))
+        loop.close()
 
     async def astruino_send_command(self):
         """
