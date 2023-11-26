@@ -422,20 +422,26 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.armMovement_noTitle_2.setObjectName(u"armMovement_noTitle_2")
         self.armMovement_noTitle = QHBoxLayout(self.armMovement_noTitle_2)
         self.armMovement_noTitle.setObjectName(u"armMovement_noTitle")
+
         self.shoulderSave_2 = QGroupBox(self.armMovement_noTitle_2)
         self.shoulderSave_2.setObjectName(u"shoulderSave_2")
         self.shoulderSave_2.setMaximumSize(QSize(200, 16777215))
         self.shoulderSave_2.setAutoFillBackground(True)
+
         self.shoulderSave = QVBoxLayout(self.shoulderSave_2)
         self.shoulderSave.setObjectName(u"shoulderSave")
+
         self.shoulder = QVBoxLayout()
         self.shoulder.setObjectName(u"shoulder")
+
         self.dial_armShoulder = QDial(self.shoulderSave_2)
         self.dial_armShoulder.setObjectName(u"dial_armShoulder")
+
         sizePolicy6 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(self.dial_armShoulder.sizePolicy().hasHeightForWidth())
+
         self.dial_armShoulder.setSizePolicy(sizePolicy6)
         self.dial_armShoulder.setMinimumSize(QSize(0, 100))
         self.dial_armShoulder.setMaximum(180)
@@ -444,7 +450,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.plainTextEdit_armShoulderValue = QPlainTextEdit(self.shoulderSave_2)
         self.plainTextEdit_armShoulderValue.setObjectName(u"plainTextEdit_armShoulderValue")
+
         sizePolicy2.setHeightForWidth(self.plainTextEdit_armShoulderValue.sizePolicy().hasHeightForWidth())
+
         self.plainTextEdit_armShoulderValue.setSizePolicy(sizePolicy2)
         self.plainTextEdit_armShoulderValue.setMaximumSize(QSize(16777215, 30))
         self.plainTextEdit_armShoulderValue.setAutoFillBackground(False)
@@ -539,6 +547,10 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.gridLayout.addWidget(self.armMovementGroup, 0, 2, 1, 1)
 
+
+        self.pushButton_armMovementSave.clicked.connect(
+                lambda : self.saveValue()
+        )
 
 #-------TOOLBOX SHELL MOVEMENT AND CAMERA ------------------------------------------------------        
         
@@ -746,6 +758,9 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
                 lambda : self.astruinoCommunication()
         )
 
+        self.dial_armShoulder.valueChanged.connect(
+                lambda : self.shoulderMergeValues()
+        )
 
 #------------------ STARTING THE THREADS -----------------------------------------
 
@@ -788,6 +803,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.label_camera.setPixmap(QPixmap.fromImage(image))
 
 
+         
 
 #-- SENSORS THREAD ----------------------------------------------------------------------------------------------
     # starting the new thread when the button "pushButton_dataSend" is clicked, we take the string from the console
@@ -798,9 +814,24 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.astro = Sensors.Astruino(value, self)
         self.astro.start()
 
+    def shoulderMergeValues(self):
+        self.plainTextEdit_armShoulderValue.setPlainText(str(self.dial_armShoulder.value()))
 
-    
-    
+        try:
+            value = int(self.plainTextEdit_armShoulderValue.toPlainText())
+            self.dial_armShoulder.setValue(value)
+        except ValueError:
+             print("Invalid value entered. Please enter a valid integer.")
+
+             
+
+    def saveValue(self):
+        arm_movement = self.dial_armShoulder.value()
+        # hand_movement = self.pushButton_handMovementSave.text()
+        # shell_movement = self.pushButton_shellMovementSave.text()  # Added parentheses here
+
+        self.plainTextEdit_console.appendPlainText(f"{arm_movement}") # :\n {hand_movement} :\n {shell_movement}")
+
 
 #----------------TRANSLATION--------------------------------------------------------------------------
     def retranslateUi(self, MainWindow):
