@@ -759,7 +759,11 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         )
 
         self.dial_armShoulder.valueChanged.connect(
-                lambda : self.shoulderMergeValues()
+                lambda : self.shoulderMergearm()
+        )
+
+        self.plainTextEdit_armShoulderValue.textChanged.connect(
+                lambda : self.shoulderMergeDial()
         )
 
 #------------------ STARTING THE THREADS -----------------------------------------
@@ -814,16 +818,19 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.astro = Sensors.Astruino(value, self)
         self.astro.start()
 
-    def shoulderMergeValues(self):
+
+
+    def shoulderMergearm(self):
         self.plainTextEdit_armShoulderValue.setPlainText(str(self.dial_armShoulder.value()))
 
+    def shoulderMergeDial(self):    
         try:
             value = int(self.plainTextEdit_armShoulderValue.toPlainText())
             self.dial_armShoulder.setValue(value)
         except ValueError:
-             print("Invalid value entered. Please enter a valid integer.")
+            print("Invalid value entered. Please enter a valid integer.")
 
-             
+
 
     def saveValue(self):
         arm_movement = self.dial_armShoulder.value()
