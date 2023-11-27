@@ -78,11 +78,12 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         #ADDING THE TITLE to the group
         self.shellOpenClose_andTitle.addWidget(self.textBrowser_shellOpeningTitle)
 
-        self.groupBox = QGroupBox(self.shellOpeningGroup)
+        self.groupBox = QWidget(self.shellOpeningGroup)
         self.groupBox.setObjectName(u"groupBox")
         self.groupBox.setMaximumSize(QSize(16777215, 60))
         self.shellOpenClose = QHBoxLayout(self.groupBox)
         self.shellOpenClose.setObjectName(u"shellOpenClose")
+
         self.pushButton_shellOpen = QPushButton(self.groupBox)
         self.pushButton_shellOpen.setObjectName(u"pushButton_shellOpen")
         self.pushButton_shellOpen.setMaximumSize(QSize(16777215, 50))
@@ -116,21 +117,59 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "QPushButton:pressed{\n"
 "background: rgba(255, 0, 0, 90)\n"
 "}\n"
+"")     
+        self.horizontalSlider_shellOpening = QSlider(self.groupBox)
+        self.horizontalSlider_shellOpening.setTickPosition(QSlider.TickPosition.TicksBothSides)
+
+        self.horizontalSlider_shellOpening.setObjectName(u"horizontalSlider_shellOpening")
+        self.horizontalSlider_shellOpening.setMinimum(-30)
+        self.horizontalSlider_shellOpening.setMaximum(30)
+        self.horizontalSlider_shellOpening.setOrientation(Qt.Horizontal)
+
+
+
+
+
+
+        self.pushButton_shellOpeningSave = QPushButton(self.groupBox)
+        self.pushButton_shellOpeningSave.setObjectName(u"pushButton_shellOpeningSave")
+        sizePolicy6 = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
+        sizePolicy6.setHeightForWidth(self.pushButton_shellOpeningSave.sizePolicy().hasHeightForWidth())
+        self.pushButton_shellOpeningSave.setSizePolicy(sizePolicy6)
+        self.pushButton_shellOpeningSave.setMinimumSize(QSize(1, 50))
+        self.pushButton_shellOpeningSave.setMaximumSize(QSize(16777215, 16777215))
+        self.pushButton_shellOpeningSave.setStyleSheet(u"QPushButton {\n"
+"border-radius: 3px;\n"
+"background: rgb(85, 170, 255);\n"
+"}\n"
+"\n"
+"QPushButton:hover{\n"
+"background: rgba(85, 170, 255,190);\n"
+"}\n"
+"QPushButton:pressed{\n"
+"background: rgba(85, 170, 255,120);\n"
+"}\n"
 "")
+
+        self.shellOpenClose.addWidget(self.horizontalSlider_shellOpening)
 
         #ADDING THE shellClose pushButton TO THE shellOpenClose WIDGET
         self.shellOpenClose.addWidget(self.pushButton_shellClose)
 
 
+
+
         #ADDING THE WHOLE WIDGET TO THE GROUP
         self.shellOpenClose_andTitle.addWidget(self.groupBox)
+
+        self.shellOpenClose_andTitle.addWidget(self.pushButton_shellOpeningSave)
 
         #SETTING THE LAYOUT
         self.gridLayout.addWidget(self.shellOpeningGroup, 1, 0, 1, 1)
 
 
 
-#-------STATUS BAR ------------------------------------------------------
+#-------STATUS BAR --------------------------------------------
 
         self.statusbarGroup = QGroupBox(self.centralwidget)
         self.statusbarGroup.setObjectName(u"statusbarGroup")
@@ -535,7 +574,6 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.plainTextEdit_armElbowValue = QPlainTextEdit(self.elbow_2)
         self.plainTextEdit_armElbowValue.setObjectName(u"plainTextEdit_armElbowValue")
         self.plainTextEdit_armElbowValue.setMaximumSize(QSize(16777215, 30))
-
         self.elbow.addWidget(self.plainTextEdit_armElbowValue)
 
 
@@ -548,9 +586,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.gridLayout.addWidget(self.armMovementGroup, 0, 2, 1, 1)
 
 
-        self.pushButton_armMovementSave.clicked.connect(
-                lambda : self.saveValue()
-        )
+
 
 #-------TOOLBOX SHELL MOVEMENT AND CAMERA ------------------------------------------------------        
         
@@ -754,16 +790,96 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         self.toolBox_shellMovementCamera.addItem(self.toolBox_shellMovementCameraPage2, u"")
 
-        self.pushButton_dataSend.clicked.connect(
-                lambda : self.astruinoCommunication()
-        )
+
+
+        # Arm movement buttons connection
 
         self.dial_armShoulder.valueChanged.connect(
-                lambda : self.shoulderMergearm()
+            lambda : self.shoulderMergeArm()
+        )
+
+        self.dial_handRotation.valueChanged.connect(
+            lambda : self.handMergeArm()
+        )
+
+        self.plainTextEdit_armSecondShoulderValue.textChanged.connect(
+            lambda : self.secondShoulderMergeArm()
+        )
+
+        self.plainTextEdit_straightMovementValue.textChanged.connect(
+            lambda : self.shellSM()
+        )
+
+        self.plainTextEdit_pendulumValue.textChanged.connect(
+            lambda : self.shellRotation()
+        )
+
+        self.pushButton_armMovementSave.clicked.connect(
+            lambda : self.saveArmValue()
+        )
+
+        self.pushButton_handMovementSave.clicked.connect(
+            lambda : self.saveHandValue()
         )
 
         self.plainTextEdit_armShoulderValue.textChanged.connect(
-                lambda : self.shoulderMergeDial()
+            lambda : self.shoulderMergeDial()
+        )
+
+        self.plainTextEdit_handRotationValue.textChanged.connect(
+            lambda : self.handMergeDial()
+        )
+
+        self.plainTextEdit_armElbowValue.textChanged.connect(
+            lambda : self.elbowMergeSlider()
+        )
+
+
+        self.verticalSlider_armElbow.valueChanged.connect(
+             lambda : self.elbowMergeText()
+        )
+
+        self.verticalSlider_straightMovement.valueChanged.connect(
+             lambda : self.shellSMtext()
+        )
+
+        self.horizontalSlider_pendulum.valueChanged.connect(
+             lambda : self.shellpendulumtext()
+        )
+
+
+        self.verticalSlider_armSecondShoulder.valueChanged.connect(
+             lambda : self.secondShoulderText()
+        )
+
+        self.pushButton_handClose.clicked.connect(
+                lambda : self.handclose()
+        )
+
+        self.pushButton_handOpen.clicked.connect(
+                lambda : self.handopen()
+        )
+
+        self.pushButton_shellClose.clicked.connect(
+                lambda : self.shellclose()
+        )
+
+        self.pushButton_shellOpen.clicked.connect(
+                lambda : self.shellopen()
+        )
+
+        self.pushButton_shellMovementSave.clicked.connect(
+                lambda : self.saveShellMovement()
+        )
+
+        self.pushButton_shellOpeningSave.clicked.connect(
+             lambda : self.saveOpenClose()
+        )
+
+
+
+        self.pushButton_dataSend.clicked.connect(
+                lambda : self.astruinoCommunication()
         )
 
 #------------------ STARTING THE THREADS -----------------------------------------
@@ -809,9 +925,13 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
          
 
-#-- SENSORS THREAD ----------------------------------------------------------------------------------------------
+#--CONNECTION OF THE BUTTONS ----------------------------------------------------------------------------------------------
     # starting the new thread when the button "pushButton_dataSend" is clicked, we take the string from the console
     # and we send it to the astruino
+      
+
+
+
     def astruinoCommunication(self):
         value = self.plainTextEdit_console.toPlainText()
         self.plainTextEdit_console.clear()
@@ -819,25 +939,111 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
         self.astro.start()
 
 
+    def handMergeArm(self):
+        self.plainTextEdit_handRotationValue.setPlainText(str(self.dial_handRotation.value()))
 
-    def shoulderMergearm(self):
+    def elbowMergeText(self):
+        self.plainTextEdit_armElbowValue.setPlainText(str(self.verticalSlider_armElbow.value()))
+
+    def secondShoulderText(self):
+        self.plainTextEdit_armSecondShoulderValue.setPlainText(str(self.verticalSlider_armSecondShoulder.value()))
+
+    def shellpendulumtext(self):
+        self.plainTextEdit_pendulumValue.setPlainText(str(self.horizontalSlider_pendulum.value()))
+
+    def shellSMtext(self):
+        self.plainTextEdit_straightMovementValue.setPlainText(str(self.verticalSlider_straightMovement.value()))
+
+    def elbowMergeSlider(self):
+
+        try:
+                self.verticalSlider_armElbow.setValue(int(self.plainTextEdit_armElbowValue.toPlainText()))  
+                
+        except ValueError:
+            print("Invalid value entered. Please enter a valid integer.")
+
+    def shellSM(self):
+
+        try:
+                self.verticalSlider_straightMovement.setValue(int(self.plainTextEdit_straightMovementValue.toPlainText()))  
+                
+        except ValueError:
+            print("Invalid value entered. Please enter a valid integer.")
+
+    def shellRotation(self):
+
+        try:
+                self.horizontalSlider_pendulum.setValue(int(self.plainTextEdit_pendulumValue.toPlainText()))  
+                
+        except ValueError:
+            print("Invalid value entered. Please enter a valid integer.")
+
+
+    def secondShoulderMergeArm(self):
+
+        try:
+                self.verticalSlider_armSecondShoulder.setValue(int(self.plainTextEdit_armSecondShoulderValue.toPlainText()))  
+
+        except ValueError:
+            print("Invalid value entered. Please enter a valid integer.")
+
+
+    def shoulderMergeArm(self):
         self.plainTextEdit_armShoulderValue.setPlainText(str(self.dial_armShoulder.value()))
 
-    def shoulderMergeDial(self):    
+    def shoulderMergeDial(self):
+
         try:
             value = int(self.plainTextEdit_armShoulderValue.toPlainText())
             self.dial_armShoulder.setValue(value)
         except ValueError:
             print("Invalid value entered. Please enter a valid integer.")
 
+    def handMergeDial(self):
+
+        try:
+            self.dial_handRotation.setValue(int(self.plainTextEdit_handRotationValue.toPlainText()))
+        except ValueError:
+            print("Invalid value entered. Please enter a valid integer.")
 
 
-    def saveValue(self):
-        arm_movement = self.dial_armShoulder.value()
-        # hand_movement = self.pushButton_handMovementSave.text()
-        # shell_movement = self.pushButton_shellMovementSave.text()  # Added parentheses here
+    def saveArmValue(self):
+        shoulder = self.plainTextEdit_armShoulderValue.toPlainText()
+        secondShoulder = self.plainTextEdit_armSecondShoulderValue.toPlainText()
+        elbow = self.plainTextEdit_armElbowValue.toPlainText()  
 
-        self.plainTextEdit_console.appendPlainText(f"{arm_movement}") # :\n {hand_movement} :\n {shell_movement}")
+        self.plainTextEdit_console.appendPlainText(f"shoulder = {shoulder} :\n secondShoulder = {secondShoulder} :\n elbow = {elbow}")
+
+
+    def saveHandValue(self):
+
+        hand = self.plainTextEdit_handRotationValue.toPlainText()  
+        self.plainTextEdit_console.appendPlainText(f"hand = {hand}")
+
+    def handopen(self):
+        value = "open"
+        self.plainTextEdit_console.appendPlainText(f"HAND = {value}")
+
+    def handclose(self):
+        value = "close"
+        self.plainTextEdit_console.appendPlainText(f"HAND = {value}")
+
+        
+    def shellopen(self):
+        value = "open"
+        self.plainTextEdit_console.appendPlainText(f"SHELL = {value}")
+
+    def shellclose(self):
+        value = "close"
+        self.plainTextEdit_console.appendPlainText(f"SHELL = {value}")
+
+    def saveShellMovement(self):
+ 
+        self.plainTextEdit_console.appendPlainText(f"Straight movement = {self.plainTextEdit_straightMovementValue.toPlainText()} \n Pendulum = {self.plainTextEdit_pendulumValue.toPlainText()}")
+
+    def saveOpenClose(self):
+ 
+        self.plainTextEdit_console.appendPlainText(f"Open angle = {str(self.horizontalSlider_shellOpening.value())}")
 
 
 #----------------TRANSLATION--------------------------------------------------------------------------
@@ -889,6 +1095,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:16pt;\">Shell Movement</span></p></body></html>", None))
         self.pushButton_shellMovementSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
         self.toolBox_shellMovementCamera.setItemText(self.toolBox_shellMovementCamera.indexOf(self.toolBox_shellMovementCameraPage1), "Shell Movement")
+        self.pushButton_shellOpeningSave.setText(QCoreApplication.translate("MainWindow", u"Save", None))
     # retranslateUi
 
 
