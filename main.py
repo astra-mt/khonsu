@@ -384,7 +384,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "}\n"
 "")
 
-        self.handOpenClose.addWidget(self.pushButton_handOpen)
+
 
         self.pushButton_handClose = QPushButton(self.handOpenCloseGroup)
         self.pushButton_handClose.setObjectName(u"pushButton_handClose")
@@ -404,8 +404,25 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 "background: rgba(255, 0, 0, 90)\n"
 "}\n"
 "")
+        
+        self.horizontalSlider_handOpening = QSlider(self.groupBox)
+        self.horizontalSlider_handOpening.setTickPosition(QSlider.TickPosition.TicksBothSides)
+
+        self.horizontalSlider_handOpening.setObjectName(u"horizontalSlider_handOpening")
+        self.horizontalSlider_handOpening.setMinimum(-30)
+        self.horizontalSlider_handOpening.setMaximum(30)
+        self.horizontalSlider_handOpening.setOrientation(Qt.Horizontal)
+
+
+
 
         self.handOpenClose.addWidget(self.pushButton_handClose)
+
+        self.handOpenClose.addWidget(self.horizontalSlider_handOpening)
+
+        self.handOpenClose.addWidget(self.pushButton_handOpen)
+
+
 
 
         self.handGroup.addWidget(self.handOpenCloseGroup)
@@ -934,6 +951,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def astruinoCommunication(self):
         value = self.plainTextEdit_console.toPlainText()
+        print(value)
         self.plainTextEdit_console.clear()
         self.astro = Sensors.Astruino(value, self)
         self.astro.start()
@@ -1023,7 +1041,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
 
     def saveHandValue(self):
-        hand_value = float(self.plainTextEdit_handRotationValue.toPlainText()) / 4  
+        hand_value = float(self.plainTextEdit_handRotationValue.toPlainText()) / 3  
         self.plainTextEdit_console.appendPlainText(f"HANDSTEPPER_{str(hand_value)}")
 
     def handopen(self):
@@ -1045,7 +1063,7 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
     def saveShellMovement(self):
  
-        self.plainTextEdit_console.appendPlainText(f"DCMOTORS_{self.plainTextEdit_straightMovementValue.toPlainText()} \n PENDULUM_{self.plainTextEdit_pendulumValue.toPlainText()}")
+        self.plainTextEdit_console.appendPlainText(f"DCMOTORS_{self.plainTextEdit_straightMovementValue.toPlainText()}\nPENDULUM_{self.plainTextEdit_pendulumValue.toPlainText()}")
 
     def saveOpenClose(self):
  
