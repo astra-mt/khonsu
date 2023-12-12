@@ -1010,15 +1010,21 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
     def saveArmValue(self):
         shoulder = self.plainTextEdit_armShoulderValue.toPlainText()
         secondShoulder = self.plainTextEdit_armSecondShoulderValue.toPlainText()
-        elbow = self.plainTextEdit_armElbowValue.toPlainText()  
+        elbow = self.plainTextEdit_armElbowValue.toPlainText()
 
-        self.plainTextEdit_console.appendPlainText(f"shoulder = {shoulder} :\n secondShoulder = {secondShoulder} :\n elbow = {elbow}")
+        if not elbow:
+                elbow = '0'  
+        if not secondShoulder:
+             secondShoulder = '0'
+        if not shoulder:
+             shoulder = '0'
+             
+        self.plainTextEdit_console.appendPlainText(f"ARMSERVOMOTORS_{shoulder}_{secondShoulder}_{elbow}")
 
 
     def saveHandValue(self):
-
-        hand = self.plainTextEdit_handRotationValue.toPlainText()  
-        self.plainTextEdit_console.appendPlainText(f"hand = {hand}")
+        hand_value = float(self.plainTextEdit_handRotationValue.toPlainText()) / 4  
+        self.plainTextEdit_console.appendPlainText(f"HANDSTEPPER_{str(hand_value)}")
 
     def handopen(self):
         value = "open"
@@ -1030,20 +1036,20 @@ class Ui_MainWindow(QtWidgets.QMainWindow):
 
         
     def shellopen(self):
-        value = "open"
-        self.plainTextEdit_console.appendPlainText(f"SHELL = {value}")
+        value = "OPEN"
+        self.plainTextEdit_console.appendPlainText(f"SHELL_{value}")
 
     def shellclose(self):
-        value = "close"
-        self.plainTextEdit_console.appendPlainText(f"SHELL = {value}")
+        value = "CLOSE"
+        self.plainTextEdit_console.appendPlainText(f"SHELL_{value}")
 
     def saveShellMovement(self):
  
-        self.plainTextEdit_console.appendPlainText(f"Straight movement = {self.plainTextEdit_straightMovementValue.toPlainText()} \n Pendulum = {self.plainTextEdit_pendulumValue.toPlainText()}")
+        self.plainTextEdit_console.appendPlainText(f"DCMOTORS_{self.plainTextEdit_straightMovementValue.toPlainText()} \n PENDULUM_{self.plainTextEdit_pendulumValue.toPlainText()}")
 
     def saveOpenClose(self):
  
-        self.plainTextEdit_console.appendPlainText(f"Open angle = {str(self.horizontalSlider_shellOpening.value())}")
+        self.plainTextEdit_console.appendPlainText(f"OPENTO_{str(self.horizontalSlider_shellOpening.value())}")
 
 
 #----------------TRANSLATION--------------------------------------------------------------------------
